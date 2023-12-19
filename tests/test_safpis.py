@@ -6,7 +6,7 @@
 import unittest
 from click.testing import CliRunner
 
-from safpis import safpis
+from safpis import api
 from safpis import cli
 
 
