@@ -28,4 +28,4 @@ jobs:
     - name: Test with tox
       env:
         SAFPIS_SUBSCRIBER_TOKEN: ${{ secrets.TOKEN }}
-      run: python -c 'import os;print(os.environ)'; tox
+      run: SAFPIS_SUBSCRIBER_TOKEN=${{ secrets.TOKEN }} python -c 'import os;print(os.environ)'; tox
