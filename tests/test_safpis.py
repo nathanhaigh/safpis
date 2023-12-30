@@ -3,7 +3,7 @@
 """Tests for `safpis` package."""
 
 
-import unittest
+from unittest import TestCase, mock
 from click.testing import CliRunner
 
 from safpis.api import SafpisAPI, APIKeyMissing
@@ -16,7 +16,7 @@ import os
 import configparser
 
 
-class TestSafpis(unittest.TestCase):
+class TestSafpis(TestCase):
     """Tests for `safpis` package."""
 
     def setUp(self):
@@ -69,13 +69,13 @@ class TestSafpis(unittest.TestCase):
     def tearDown(self):
         """Tear down test fixtures, if any."""
 
+    @mock.patch.dict(os.environ,{"fake_key": "fake"}, clear=True)
     def test_token_None(self):
-        os.environ.pop("SAFPIS_SUBSCRIBER_TOKEN", None)
         with self.assertRaises(APIKeyMissing):
             SafpisAPI()
 
+    @mock.patch.dict(os.environ,{"SAFPIS_SUBSCRIBER_TOKEN": ""})
     def test_token_empty(self):
-        os.environ["SAFPIS_SUBSCRIBER_TOKEN"] = ""
         with self.assertRaises(APIKeyMissing):
             SafpisAPI()
 
@@ -83,8 +83,8 @@ class TestSafpis(unittest.TestCase):
         safpis_api = SafpisAPI()
         self.assertIsInstance(safpis_api, SafpisAPI)
 
+    @mock.patch.dict(os.environ,{"SAFPIS_SUBSCRIBER_TOKEN": "INVALID-TOKEN"})
     def test_token_invalid(self):
-        os.environ["SAFPIS_SUBSCRIBER_TOKEN"] = "INVALID-TOKEN"
         safpis_api = SafpisAPI()
         self.assertIsInstance(safpis_api, SafpisAPI)
 
@@ -94,8 +94,8 @@ class TestSafpis(unittest.TestCase):
         self.assertIsInstance(response, dict)
         self.assertIn("Brands", response)
 
+    @mock.patch.dict(os.environ,{"SAFPIS_SUBSCRIBER_TOKEN": "INVALID-TOKEN"})
     def test_get_country_brands_invalid_token(self):
-        os.environ["SAFPIS_SUBSCRIBER_TOKEN"] = "INVALID-TOKEN"
         safpis_api = SafpisAPI()
         with self.assertRaises(Exception):
             safpis_api.get_country_brands()
