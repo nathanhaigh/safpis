@@ -4,18 +4,12 @@ on:
   - push
   - pull_request
 
-env:
-    SAFPIS_SUBSCRIBER_TOKEN: ${{ secrets.TOKEN }}
-
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: ['3.7', '3.8', '3.9', '3.10', '3.11', '3.12']
-
-    env:
-      SAFPIS_SUBSCRIBER_TOKEN: ${{ secrets.SAFPIS_SUBSCRIBER_TOKEN }}
 
     steps:
     - name: Checkout Code
@@ -32,4 +26,6 @@ jobs:
         python -m pip install tox tox-gh-actions
 
     - name: Test with tox
+      env:
+        SAFPIS_SUBSCRIBER_TOKEN: ${{ secrets.TOKEN }}
       run: tox
