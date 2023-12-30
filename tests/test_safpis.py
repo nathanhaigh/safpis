@@ -86,39 +86,39 @@ class TestSafpis(unittest.TestCase):
         safpis_api = SafpisAPI()
         self.assertIsInstance(safpis_api, SafpisAPI)
 
-    def test_GetCountryBrands(self):
+    def test_get_country_brands(self):
         safpis_api = SafpisAPI()
-        response = safpis_api.GetCountryBrands()
+        response = safpis_api.get_country_brands()
         self.assertIsInstance(response, dict)
         self.assertIn("Brands", response)
 
-    def test_GetCountryBrands_invalid_token(self):
+    def test_get_country_brands_invalid_token(self):
         os.environ["SAFPIS_SUBSCRIBER_TOKEN"] = "INVALID-TOKEN"
         safpis_api = SafpisAPI()
         with self.assertRaises(Exception):
-            safpis_api.GetCountryBrands()
+            safpis_api.get_country_brands()
 
-    def test_GetCountryGeographicRegions(self):
+    def test_get_country_geographic_regions(self):
         safpis_api = SafpisAPI()
-        response = safpis_api.GetCountryGeographicRegions()
+        response = safpis_api.get_country_geographic_regions()
         self.assertIsInstance(response, dict)
         self.assertIn("GeographicRegions", response)
 
-    def test_GetFuelTypes(self):
+    def test_get_country_fuel_types(self):
         safpis_api = SafpisAPI()
-        response = safpis_api.GetFuelTypes()
+        response = safpis_api.get_country_fuel_types()
         self.assertIsInstance(response, dict)
         self.assertIn("Fuels", response)
 
-    def test_GetFullSiteDetails(self):
+    def test_get_full_site_details(self):
         safpis_api = SafpisAPI()
-        response = safpis_api.GetFullSiteDetails()
+        response = safpis_api.get_full_site_details()
         self.assertIsInstance(response, dict)
         self.assertIn("S", response)
 
-    def test_GetSitesPrices(self):
+    def test_get_sites_prices(self):
         safpis_api = SafpisAPI()
-        response = safpis_api.GetSitesPrices()
+        response = safpis_api.get_sites_prices()
         self.assertIsInstance(response, dict)
         self.assertIn("SitePrices", response)
 

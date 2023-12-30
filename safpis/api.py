@@ -1,34 +1,38 @@
 import os
 import requests_cache
 import datetime
-from safpis.models import Brand, Region, Fuel, Site, SitePrice
+from safpis.models import Brand, Fuel, Site, SitePrice
+from geopy.distance import Distance
 
 
 class SafpisAPI:
+    """This is a class for interacting with the SAFPIS REST API.
+    """
+
     def __init__(self) -> None:
+        """Constructor method
         """
-        Function to initialise the SAFPIS API Class
-        """
-        token = os.environ.get("SAFPIS_SUBSCRIBER_TOKEN", None)
-
-        if token is None:
-            raise APIKeyMissingError(
-                "A Subscriber Token is required. See "
-                "https://www.safuelpricinginformation.com.au for information "
-                "on registering as a Data Publisher and obtaining a Subscriber "
-                "Token."
-                "You must set the SAFPIS_SUBSCRIBER_TOKEN environmental "
-                "variable value to your Subscriber Token or pass the name of "
-                "the environmental variable holding your Subscriber Token "
-                "when creating an instance of SafpisAPI."
-            )
-
-        self.base_url = "https://fppdirectapi-prod.safuelpricinginformation.com.au"
+        self.base_url = (
+            "https://"
+            "fppdirectapi-prod.safuelpricinginformation.com.au"
+        )
         self.__country_id = 21  # 21 = Australia
         self.__geo_region_level = 3  # 3 = States
         self.__geo_region_id = 4  # 4 = South Australia
 
-        self.home = (-35.062058, 138.593400)
+        try:
+            subscriber_token = os.environ["SAFPIS_SUBSCRIBER_TOKEN"]
+            if not subscriber_token:
+                raise APIKeyMissing(
+                    "Environmental variable SAFPIS_SUBSCRIBER_TOKEN is set "
+                    "but empty."
+                )
+        except KeyError:
+            raise APIKeyMissing(
+                "Environmental variable SAFPIS_SUBSCRIBER_TOKEN is not set."
+            )
+
+        self.__token = subscriber_token
 
         self.cached_session_day = requests_cache.CachedSession(
             "safpis_cache_day",
@@ -54,20 +58,26 @@ class SafpisAPI:
             "Content-Type": "application/json",
             "Accept": "*/*",
             "Accept-Encoding": "gzip, deflate, br",
-            "Authorization": f"FPDAPI SubscriberToken={token}",
+            "Authorization": f"FPDAPI SubscriberToken={self.__token}",
         }
 
-    def __call_api(self, url: str, params: dict, cache="day"):
-        """
-        Function to call the API via the requests_cache Library
-        :param request_type: Type of Request.
-               Supported Values - GET, POST, PUT, PATCH, DELETE.
-               Type - String
-        :param url: URL of the API Endpoint. Type - String
-        :param params: API Request Parameters. Type - String
-        :param cache: Cache duration for API responses.
-                      Values - day (default) or minute
-        :return: Response. Type - Response
+    def __call_api(self, url: str, params: dict, cache: str = "day"):
+        """Dispatches requests to the SAFPIS REST API, caching responses to
+        avoid undue load on the service as required by the SAFPIS API (OUT)
+        Guide.
+
+        :param url: The path and endpoint for the request.
+        :type url: str
+        :param params: Request Parameters.
+        :type params: dict
+        :param cache: The cache used for the request, defaults to 'day'.  It
+             can be 'day' or 'minute'.
+        :type cache: str
+        :raises ValueError: if :param cache: value is not recognised.
+        :raises HTTPError: if the HTTP response is a 4XX client or 5XX server
+            error response.
+        :return: The request response.
+        :rtype: requests.Response
         """
         valid_cache = {"day", "minute"}
         if cache not in valid_cache:
@@ -79,78 +89,99 @@ class SafpisAPI:
                 headers=self.headers,
                 params=params,
             )
-        elif cache == "hour":
-            response = self.cached_session_hour.get(
+        elif cache == "minute":
+            response = self.cached_session_minute.get(
                 url,
                 headers=self.headers,
                 params=params,
             )
 
+        response.raise_for_status()
+
         return response
 
-    def brands(self):
-        """
-        Function to return a list of fuel brands.
-        :return: Response. Type - Response
+    def get_country_brands(self, countryId: int = 21):
+        """Sends a request to the GetCountryBrands endpoint, caching responses
+        for a day.
+
+        :param countryId: The ID of the country for which fuel brands are being
+            requested, defaults to 21 (Australia).
+        :type countryId: int
+        :return: The json-encoded content of the response.
         """
         url = f"{self.base_url}/Subscriber/GetCountryBrands"
-        params = {"countryId": self.__country_id}
+        params = {"countryId": countryId}
 
         response = self.__call_api(
             url,
             params=params,
         )
 
-        brand_list = [Brand(**brand) for brand in response.json()["Brands"]]
+        return response.json()
 
-        return brand_list
+    def get_country_geographic_regions(self, countryId: int = 21):
+        """Sends a request to the GetCountryGeographicRegions endpoint, caching
+        responses for a day.
 
-    def regions(self):
-        """
-        Function to return a list of suburbs, cities and states
-        :return: Response. Type - Response
+        :param countryId: The ID of the country for which geographic regions
+            are being requested, defaults to 21 (Australia).
+        :type countryId: int
+        :return: The json-encoded content of the response.
         """
         url = f"{self.base_url}/Subscriber/GetCountryGeographicRegions"
-        params = {"countryId": self.__country_id}
+        params = {"countryId": countryId}
 
         response = self.__call_api(
             url,
             params=params,
         )
 
-        region_list = [
-            Region(**region) for region in response.json()["GeographicRegions"]
-        ]
+        return response.json()
 
-        return region_list
+    def get_country_fuel_types(self, countryId: int = 21):
+        """Sends a request to the GetCountryFuelTypes endpoint, caching
+        responses for a day.
 
-    def fuel_types(self):
-        """
-        Function to return a list of fuel types
-        :return: Response. Type - Response
+        :param countryId: The ID of the country for which fuel types are being
+            requested, defaults to 21 (Australia).
+        :type countryId: int
+        :return: The json-encoded content of the response.
         """
         url = f"{self.base_url}/Subscriber/GetCountryFuelTypes"
-        params = {"countryId": self.__country_id}
+        params = {"countryId": countryId}
 
         response = self.__call_api(
             url,
             params=params,
         )
 
-        fuel_type_list = [Fuel(**fuel_type) for fuel_type in response.json()["Fuels"]]
+        return response.json()
 
-        return fuel_type_list
+    def get_full_site_details(
+        self,
+        countryId: int = 21,
+        GeoRegionLevel: int = 3,
+        GeoRegionId: int = 4,
+    ):
+        """Sends a request to the GetFullSiteDetails endpoint, caching
+        responses for a day.
 
-    def sites(self):
-        """
-        Function to return a list of sites
-        :return: Response. Type - Response
+        :param countryId: The ID of the country for which site details are
+            being requested, defaults to 21 (Australia).
+        :type countryId: int
+        :param GeoRegionLevel: The level of the geographic region for which
+            site details are being requested, defaults to 3 (states).
+        :type GeoRegionLevel: int
+        :param GeoRegionId: The ID of the geographic region for which site
+            details are being requested, defaults to 4 (South Australia).
+        :type GeoRegionId: int
+        :return: The json-encoded content of the response.
         """
         url = f"{self.base_url}/Subscriber/GetFullSiteDetails"
         params = {
-            "countryId": self.__country_id,
-            "geoRegionLevel": self.__geo_region_level,
-            "geoRegionId": self.__geo_region_id,
+            "countryId": countryId,
+            "geoRegionLevel": GeoRegionLevel,
+            "geoRegionId": GeoRegionId,
         }
 
         response = self.__call_api(
@@ -158,71 +189,159 @@ class SafpisAPI:
             params=params,
         )
 
-        site_list = [Site(**site) for site in response.json()["S"]]
+        return response.json()
 
-        return site_list
+    def get_sites_prices(
+        self,
+        countryId: int = 21,
+        GeoRegionLevel: int = 3,
+        GeoRegionId: int = 4,
+    ):
+        """Sends a request to the GetSitesPrices endpoint, caching
+        responses for a minute.
 
-    def site_prices(self):
-        """
-        Function to return a list of fuel prices for all sites
-        :return: Response. Type - Response
+        :param countryId: The ID of the country for which site prices are
+            being requested, defaults to 21 (Australia).
+        :type countryId: int
+        :param GeoRegionLevel: The level of the geographic region for which
+            site prices are being requested, defaults to 3 (states).
+        :type GeoRegionLevel: int
+        :param GeoRegionId: The ID of the geographic region for which site
+            prices are being requested, defaults to 4 (South Australia).
+        :type GeoRegionId: int
+        :return: The json-encoded content of the response.
         """
         url = f"{self.base_url}/Price/GetSitesPrices"
         params = {
-            "countryId": self.__country_id,
-            "geoRegionLevel": self.__geo_region_level,
-            "geoRegionId": self.__geo_region_id,
+            "countryId": countryId,
+            "geoRegionLevel": GeoRegionLevel,
+            "geoRegionId": GeoRegionId,
         }
 
         response = self.__call_api(
             url,
             params=params,
+            cache="minute",
         )
 
-        site_price_list = [
-            SitePrice(**site_price) for site_price in response.json()["SitePrices"]
+        return response.json()
+
+    def brands_by_id(self, id: int):
+        brands = [
+            Brand(**brand)
+            for brand in self.get_country_brands()["Brands"]
+            if brand["BrandId"] == id
         ]
+        if not brands:
+            raise ValueError(f"No brand found for id: {id}")
+        return brands
 
-        return site_price_list
+    def brands_by_name(self, name: str):
+        brands = [
+            Brand(**brand)
+            for brand in self.get_country_brands()["Brands"]
+            if brand["Name"] == name
+        ]
+        if not brands:
+            raise ValueError(f"No brand found for name: {name}")
+        return brands
 
-    def sites_by_nearest(self, lat: float, lng: float, n: int = None):
-        """
-        Function to return a list of sites, ordered by distance
-        :param lat: Latitude. Type - float
-        :param lng: Longitude. Type - float
-        :param n: Number of sites to return. Type - int
-        :return: List of Site objects
-        """
-        sites = self.sites() if n is None else self.sites()[:n]
+    def fuels_by_id(self, id: int):
+        fuels = [
+            Fuel(**fuel)
+            for fuel in self.get_country_fuel_types()["Fuels"]
+            if fuel["FuelId"] == id
+        ]
+        if not fuels:
+            raise ValueError(f"No fuel type found for id: {id}")
+        return fuels
 
-        sorted_sites = sorted(sites, key=lambda site: site.distance_between(lat, lng))
+    def fuels_by_name(self, name: str):
+        fuels = [
+            Fuel(**fuel)
+            for fuel in self.get_country_fuel_types()["Fuels"]
+            if fuel["Name"] == name
+        ]
+        if not fuels:
+            raise ValueError(f"No fuel type found for name: {name}")
+        return fuels
+
+    def sites_by_id(self, id: int):
+        sites = [
+            Site(**site)
+            for site
+            in self.get_full_site_details()["S"]
+            if site["S"] == id
+        ]
+        if not sites:
+            raise ValueError(f"No sites found for id: {id}")
+        return sites
+
+    def sites_by_name(self, name: str):
+        sites = [
+            Site(**site)
+            for site
+            in self.get_full_site_details()["S"]
+            if site["N"] == name
+        ]
+        if not sites:
+            raise ValueError(f"No sites found for name: {name}")
+        return sites
+
+    def sites_by_distance(
+        self, latitude: float, longitude: float, max_distance: Distance
+    ):
+        sites = [Site(**site) for site in self.get_full_site_details()["S"]]
+        filtered_sites = filter(
+            lambda site:
+                site.distance_between(latitude, longitude) <= max_distance,
+            sites,
+        )
+        sorted_sites = sorted(
+            filtered_sites,
+            key=lambda site: site.distance_between(latitude, longitude)
+        )
 
         return sorted_sites
 
-    def sites_by_cheapest_fuel(self, fuel_type: str, n: int = None):
+    def sites_open(self, datetime: datetime):
+        sites = [
+            Site(**site)
+            for site
+            in self.get_full_site_details()["S"]
+        ]
+        filtered_sites = filter(lambda site: site.is_open(datetime), sites)
+
+        return list(filtered_sites)
+
+    def sites_by_cheapest_fuel_type(self, fuel_type: str):
         """
         Function to return a list of sites, ordered by price
         :param fuel_type: Fuel type. Type - str
-        :param lng: Longitude. Type - float
-        :param n: Number of sites to return. Type - int
         :return: List of Site objects
         """
-        valid_fuel_types = [item.name for item in self.fuel_types()]
-        if fuel_type not in valid_fuel_types:
-            raise ValueError("fuel_type must be one of %r." % valid_fuel_types)
-
-        fuel_type_id = [item.id for item in self.fuel_types() if item.name == fuel_type]
-
         site_prices = [
-            item for item in self.site_prices() if item.fuel_id in fuel_type_id
+            SitePrice(**site_price)
+            for site_price
+            in self.get_sites_prices()["SitePrices"]
         ]
-
+        fuel_id = self.fuels_by_name(name=fuel_type)[0].FuelId
+        filtered_site_prices = filter(
+            lambda site_price: site_price.FuelId == fuel_id,
+            site_prices,
+        )
         sorted_site_prices = sorted(
-            site_prices, key=lambda site_price: site_price.price.amount
+            filtered_site_prices,
+            key=lambda site_price: site_price.Price.amount,
         )
 
         return sorted_site_prices
 
 
-class APIKeyMissingError(Exception):
+class APIKeyMissing(Exception):
+    """Exception for a missing SAFPIS Subscriber Token.
+
+    The SAFPIS Subscriber Token should be specified in the environmental
+    variable 'SAFPIS_SUBSCRIBER_TOKEN'.
+    """
     pass

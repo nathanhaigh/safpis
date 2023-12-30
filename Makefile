@@ -49,22 +49,24 @@ clean-test: ## remove test and coverage artifacts
 
 lint/flake8: ## check style with flake8
 	flake8 safpis tests
-lint/black: ## check style with black
-	black --check safpis tests
 
-lint: lint/flake8 lint/black ## check style
+lint/black: ## check style with black
+	black --check --diff safpis tests
+
+lint: lint/flake8 lint/black ## check style with flake8 and black
 
 test: ## run tests quickly with the default Python
-	python setup.py test
+	python -m unittest discover -s tests
 
 test-all: ## run tests on every Python version with tox
 	tox
 
 coverage: ## check code coverage quickly with the default Python
-	coverage run --source safpis setup.py test
+	coverage run -m unittest discover
 	coverage report -m
 	coverage html
 	$(BROWSER) htmlcov/index.html
+
 
 docs: ## generate Sphinx HTML documentation, including API docs
 	rm -f docs/safpis.rst
@@ -77,12 +79,17 @@ docs: ## generate Sphinx HTML documentation, including API docs
 servedocs: docs ## compile the docs watching for changes
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
-release: dist ## package and upload a release
-	twine upload dist/*
+release-testpypi: dist ## package and upload a release to testpypi
+	python -m twine upload --repository testpypi dist/*
+
+install-testpypi: ## install safpis from testpypi
+    python3 -m pip install --index-url https://test.pypi.org/simple/ --no-deps safpis
+
+release-pypi: dist ## ## Package and upload a release to PyPi
+	python -m twine upload dist/*
 
 dist: clean ## builds source and wheel package
-	python setup.py sdist
-	python setup.py bdist_wheel
+	python -m build
 	ls -l dist
 
 install: clean ## install the package to the active Python's site-packages

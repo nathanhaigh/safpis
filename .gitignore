@@ -107,3 +107,6 @@ ENV/
 
 # Ignore file containing secrets
 secrets.cfg
+
+# Ignore swap files
+*.swp

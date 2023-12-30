@@ -1,0 +1,59 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "safpis"
+version = "0.1.0"
+description = """
+    SAFPIS is a Python library to access the South Australia Fuel Pricing
+    Information Scheme (SAFPIS) REST API.
+"""
+license = {text = "MIT License"}
+requires-python = ">=3.5"
+dynamic = ["dependencies"]
+authors = [
+    {name = "Nathan Watson-Haigh", email = "nathan@watsonhaigh.net"},
+]
+readme = "README.rst"
+keywords = ["safpis", "two"]
+classifiers = [
+    # How mature is this project? Common values are
+    #   3 - Alpha
+    #   4 - Beta
+    #   5 - Production/Stable
+    "Development Status :: 3 - Alpha",
+
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+
+    "Natural Language :: English",
+
+    "License :: OSI Approved :: MIT License",
+
+    "Operating System :: OS Independent",
+
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+
+    "Topic :: Home Automation",
+]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[project.urls]
+Documentation = "https://safpis.readthedocs.io"
+Repository = "https://github.com/nathanhaigh/safpis.git"
+Issues = "https://github.com/nathanhaigh/safpis/issues"
+History = "https://github.com/nathanhaigh/safpis/blob/main/HISTORY.rst"
+
+[tool.black]
+line-length = 79
