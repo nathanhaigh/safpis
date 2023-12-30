@@ -28,4 +28,4 @@ jobs:
     - name: Test with tox
       env:
         SAFPIS_SUBSCRIBER_TOKEN: ${{ secrets.TOKEN }}
-      run: SAFPIS_SUBSCRIBER_TOKEN=${{ secrets.TOKEN }} tox
+      run: export SAFPIS_SUBSCRIBER_TOKEN=${{ secrets.TOKEN }} tox
