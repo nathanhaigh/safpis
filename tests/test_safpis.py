@@ -20,11 +20,13 @@ class TestSafpis(unittest.TestCase):
     """Tests for `safpis` package."""
 
     def setUp(self):
-        config = configparser.ConfigParser()
-        config.read("secrets.cfg")
-        os.environ["SAFPIS_SUBSCRIBER_TOKEN"] = config["TEST"][
-            "SAFPIS_SUBSCRIBER_TOKEN"
-        ]
+        secret_config_file = "secrets.cfg"
+        if os.path.exists(secret_config_file):
+            config = configparser.ConfigParser()
+            config.read(secret_config_file)
+            os.environ["SAFPIS_SUBSCRIBER_TOKEN"] = config["TEST"][
+                "SAFPIS_SUBSCRIBER_TOKEN"
+            ]
 
         self.site_dict = {
             "S": "61205460",
