@@ -5,7 +5,7 @@ on:
   - pull_request
 
 env:
-  SAFPIS_SUBSCRIBER_TOKEN: ${{ secrets.SAFPIS_SUBSCRIBER_TOKEN }}
+  SAFPIS_SUBSCRIBER_TOKEN: '${{ secrets.SAFPIS_SUBSCRIBER_TOKEN }}'
 
 jobs:
   build:
