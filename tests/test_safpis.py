@@ -27,7 +27,6 @@ class TestSafpis(TestCase):
             os.environ["SAFPIS_SUBSCRIBER_TOKEN"] = config["TEST"][
                 "SAFPIS_SUBSCRIBER_TOKEN"
             ]
-        print(os.environ.get("SAFPIS_SUBSCRIBER_TOKEN"))
 
         self.site_dict = {
             "S": "61205460",

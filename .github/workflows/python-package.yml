@@ -4,9 +4,6 @@ on:
   - push
   - pull_request
 
-env:
-  SAFPIS_SUBSCRIBER_TOKEN: '${{ secrets.SAFPIS_SUBSCRIBER_TOKEN }}'
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,8 +25,7 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install tox tox-gh-actions
 
-    - name: Test secret env variable
-      run: python -c 'import os; print(os.environ.get("SAFPIS_SUBSCRIBER_TOKEN"))'
-      
     - name: Test with tox
+      env:
+        SAFPIS_SUBSCRIBER_TOKEN: '${{ secrets.SAFPIS_SUBSCRIBER_TOKEN }}'
       run: tox
