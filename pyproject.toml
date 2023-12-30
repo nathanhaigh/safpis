@@ -91,6 +91,8 @@ deps =
     -rrequirements.txt
 setenv =
     PYTHONPATH = {toxinidir}
+passenv =
+    SAFPIS_SUBSCRIBER_TOKEN
 commands =
     python -m unittest discover -s tests
 """
