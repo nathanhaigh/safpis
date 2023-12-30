@@ -4,6 +4,9 @@ on:
   - push
   - pull_request
 
+env:
+  SAFPIS_SUBSCRIBER_TOKEN: ${{ secrets.SAFPIS_SUBSCRIBER_TOKEN }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,6 +29,4 @@ jobs:
         python -m pip install tox tox-gh-actions
 
     - name: Test with tox
-      env:
-        SAFPIS_SUBSCRIBER_TOKEN: ${{ secrets.TOKEN }}
-      run: export SAFPIS_SUBSCRIBER_TOKEN=${{ secrets.TOKEN }}; tox
+      run: tox
