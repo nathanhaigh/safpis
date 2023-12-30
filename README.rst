@@ -6,8 +6,8 @@ safpis
 .. image:: https://img.shields.io/pypi/v/safpis.svg
         :target: https://pypi.python.org/pypi/safpis
 
-.. image:: https://img.shields.io/travis/nathanhaigh/safpis.svg
-        :target: https://travis-ci.com/nathanhaigh/safpis
+.. image:: https://github.com/nathanhaigh/safpis/actions/workflows/python-package.yml/badge.svg
+        :target: https://github.com/nathanhaigh/safpis/actions/workflows/python-package.yml
 
 .. image:: https://readthedocs.org/projects/safpis/badge/?version=latest
         :target: https://safpis.readthedocs.io/en/latest/?version=latest
