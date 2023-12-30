@@ -21,7 +21,7 @@ class SafpisAPI:
         self.__geo_region_id = 4  # 4 = South Australia
 
         try:
-            subscriber_token = os.environ["SAFPIS_SUBSCRIBER_TOKEN"]
+            subscriber_token = os.environ.get("SAFPIS_SUBSCRIBER_TOKEN")
             if not subscriber_token:
                 raise APIKeyMissing(
                     "Environmental variable SAFPIS_SUBSCRIBER_TOKEN is set "
