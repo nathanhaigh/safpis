@@ -4,20 +4,19 @@ safpis
 
 
 .. image:: https://img.shields.io/pypi/v/safpis.svg
-        :target: https://pypi.python.org/pypi/safpis
+     :target: https://pypi.python.org/pypi/safpis
 
-.. image:: https://github.com/nathanhaigh/safpis/actions/workflows/python-package.yml/badge.svg
-        :target: https://github.com/nathanhaigh/safpis/actions/workflows/python-package.yml
+.. image:: https://img.shields.io/github/actions/workflow/status/nathanhaigh/safpis/python-package.yml
+     :target: https://github.com/nathanhaigh/safpis/actions/workflows/python-package.yml
 
-.. image:: https://readthedocs.org/projects/safpis/badge/?version=latest
-        :target: https://safpis.readthedocs.io/en/latest/?version=latest
-        :alt: Documentation Status
+.. image:: https://img.shields.io/readthedocs/safpis
+     :target: https://safpis.readthedocs.io/en/latest/?version=latest
+     :alt: Documentation Status
 
 
 .. image:: https://pyup.io/repos/github/nathanhaigh/safpis/shield.svg
      :target: https://pyup.io/repos/github/nathanhaigh/safpis/
      :alt: Updates
-
 
 
 safpis is a Python library to access the South Australia Fuel Pricing
