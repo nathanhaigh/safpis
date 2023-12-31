@@ -94,7 +94,7 @@ commands =
 """
 
 [tool.bumpversion]
-current_version = "0.2.0"
+current_version = "0.2.1"
 commit = true
 commit_args = "--no-verify"
 tag = true
@@ -109,6 +109,7 @@ message = "Version updated from {current_version} to {new_version}"
 
 [[tool.bumpversion.files]]
 filename = "safpis/__init__.py"
+
 
 [project.urls]
 Documentation = "https://safpis.readthedocs.io"
