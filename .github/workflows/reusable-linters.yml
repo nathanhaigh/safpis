@@ -85,7 +85,7 @@ jobs:
       run: python -m pip freeze --all
     - name: Initialize tox envs
       run: |
-        python -m tox --parallel auto --parallel-live --notest
+        tox --parallel auto --parallel-live --notest
     - name: Initialize pre-commit envs if needed
       run: >-
         test -d .tox/lint
