@@ -13,6 +13,9 @@ safpis
      :target: https://safpis.readthedocs.io/en/latest/?version=latest
      :alt: Documentation Status
 
+.. image:: https://img.shields.io/codecov/c/github/nathanhaigh/safpis
+     :target: https://app.codecov.io/gh/nathanhaigh/safpis
+
 .. image:: https://img.shields.io/pypi/safpis/pybadges.svg
 
 .. image:: https://pyup.io/repos/github/nathanhaigh/safpis/shield.svg
