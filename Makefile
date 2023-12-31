@@ -85,7 +85,7 @@ release-testpypi: dist ## package and upload a release to testpypi
 install-testpypi: ## install safpis from testpypi
     python3 -m pip install --index-url https://test.pypi.org/simple/ --no-deps safpis
 
-release-pypi: dist ## ## Package and upload a release to PyPi
+release-pypi: dist ## Package and upload a release to PyPi
 	python -m twine upload dist/*
 
 dist: clean ## builds source and wheel package
