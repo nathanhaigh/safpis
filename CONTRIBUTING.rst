@@ -38,8 +38,8 @@ and "help wanted" is open to whoever wants to implement it.
 Write Documentation
 ~~~~~~~~~~~~~~~~~~~
 
-PySAFPIS could always use more documentation, whether as part of the
-official PySAFPIS docs, in docstrings, or even on the web in blog posts,
+safpis could always use more documentation, whether as part of the
+official safpis docs, in docstrings, or even on the web in blog posts,
 articles, and such.
 
 Submit Feedback

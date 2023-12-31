@@ -8,13 +8,13 @@ Installation
 Stable release
 --------------
 
-To install PySAFPIS, run this command in your terminal:
+To install safpis, run this command in your terminal:
 
 .. code-block:: console
 
     $ pip install safpis
 
-This is the preferred method to install PySAFPIS, as it will always install the most recent stable release.
+This is the preferred method to install safpis, as it will always install the most recent stable release.
 
 If you don't have `pip`_ installed, this `Python installation guide`_ can guide
 you through the process.
@@ -26,7 +26,7 @@ you through the process.
 From sources
 ------------
 
-The sources for PySAFPIS can be downloaded from the `Github repo`_.
+The sources for safpis can be downloaded from the `Github repo`_.
 
 You can either clone the public repository:
 

@@ -2,6 +2,6 @@
 Usage
 =====
 
-To use PySAFPIS in a project::
+To use safpis in a project::
 
     import safpis

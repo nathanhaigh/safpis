@@ -1,5 +1,5 @@
-Welcome to PySAFPIS's documentation!
-======================================
+Welcome to safpis' documentation!
+=================================
 
 .. toctree::
    :maxdepth: 2
