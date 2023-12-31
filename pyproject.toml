@@ -4,14 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "safpis"
-version = "0.1.0"
 description = """
     SAFPIS is a Python library to access the South Australia Fuel Pricing
     Information Scheme (SAFPIS) REST API.
 """
 license = {text = "MIT License"}
 requires-python = ">=3.5"
-dynamic = ["dependencies"]
+dynamic = ["dependencies", "version"]
 authors = [
     {name = "Nathan Watson-Haigh", email = "nathan@watsonhaigh.net"},
 ]
@@ -49,6 +48,7 @@ classifiers = [
 [tool]
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
+version = {attr = "safpis.__version__"}
 
 
 [tool.black]
@@ -106,6 +106,9 @@ serialize = [
     "{major}.{minor}.{patch}"
 ]
 message = "Version updated from {current_version} to {new_version}"
+
+[[tool.bumpversion.files]]
+filename = "safpis/__init__.py"
 
 [project.urls]
 Documentation = "https://safpis.readthedocs.io"
