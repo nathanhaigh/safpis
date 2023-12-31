@@ -108,7 +108,7 @@ class Site:
                     setattr(
                         self,
                         variable_name,
-                        datetime.strptime(value, "%H:%M").time()
+                        datetime.strptime(value, "%H:%M").time(),
                     )
 
     def distance_between(self, latitude: float, longitude: float):

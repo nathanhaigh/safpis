@@ -6,15 +6,12 @@ from geopy.distance import Distance
 
 
 class SafpisAPI:
-    """This is a class for interacting with the SAFPIS REST API.
-    """
+    """This is a class for interacting with the SAFPIS REST API."""
 
     def __init__(self) -> None:
-        """Constructor method
-        """
+        """Constructor method"""
         self.base_url = (
-            "https://"
-            "fppdirectapi-prod.safuelpricinginformation.com.au"
+            "https://" "fppdirectapi-prod.safuelpricinginformation.com.au"
         )
         self.__country_id = 21  # 21 = Australia
         self.__geo_region_level = 3  # 3 = States
@@ -269,8 +266,7 @@ class SafpisAPI:
     def sites_by_id(self, id: int):
         sites = [
             Site(**site)
-            for site
-            in self.get_full_site_details()["S"]
+            for site in self.get_full_site_details()["S"]
             if site["S"] == id
         ]
         if not sites:
@@ -280,8 +276,7 @@ class SafpisAPI:
     def sites_by_name(self, name: str):
         sites = [
             Site(**site)
-            for site
-            in self.get_full_site_details()["S"]
+            for site in self.get_full_site_details()["S"]
             if site["N"] == name
         ]
         if not sites:
@@ -293,23 +288,19 @@ class SafpisAPI:
     ):
         sites = [Site(**site) for site in self.get_full_site_details()["S"]]
         filtered_sites = filter(
-            lambda site:
-                site.distance_between(latitude, longitude) <= max_distance,
+            lambda site: site.distance_between(latitude, longitude)
+            <= max_distance,
             sites,
         )
         sorted_sites = sorted(
             filtered_sites,
-            key=lambda site: site.distance_between(latitude, longitude)
+            key=lambda site: site.distance_between(latitude, longitude),
         )
 
         return sorted_sites
 
     def sites_open(self, datetime: datetime):
-        sites = [
-            Site(**site)
-            for site
-            in self.get_full_site_details()["S"]
-        ]
+        sites = [Site(**site) for site in self.get_full_site_details()["S"]]
         filtered_sites = filter(lambda site: site.is_open(datetime), sites)
 
         return list(filtered_sites)
@@ -322,8 +313,7 @@ class SafpisAPI:
         """
         site_prices = [
             SitePrice(**site_price)
-            for site_price
-            in self.get_sites_prices()["SitePrices"]
+            for site_price in self.get_sites_prices()["SitePrices"]
         ]
         fuel_id = self.fuels_by_name(name=fuel_type)[0].FuelId
         filtered_site_prices = filter(
@@ -344,4 +334,5 @@ class APIKeyMissing(Exception):
     The SAFPIS Subscriber Token should be specified in the environmental
     variable 'SAFPIS_SUBSCRIBER_TOKEN'.
     """
+
     pass
