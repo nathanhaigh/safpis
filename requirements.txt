@@ -1,5 +1,5 @@
 requests_cache==0.9.1
-geopy==1.13.0
+geopy==2.4.1
 money==1.0
 python-dateutil==2.7.0
 #pytz==2018.4
