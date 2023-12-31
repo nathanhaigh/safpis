@@ -16,11 +16,11 @@ safpis
 .. image:: https://img.shields.io/codecov/c/github/nathanhaigh/safpis
      :target: https://app.codecov.io/gh/nathanhaigh/safpis
 
-.. image:: https://img.shields.io/pypi/safpis/pybadges.svg
+.. image:: https://img.shields.io/badge/code%20style-black-black
+     :target: https://black.readthedocs.io/en/stable/
 
-.. image:: https://pyup.io/repos/github/nathanhaigh/safpis/shield.svg
-     :target: https://pyup.io/repos/github/nathanhaigh/safpis/
-     :alt: Updates
+.. image:: https://img.shields.io/badge/License-MIT-yellow.svg
+     :target: https://opensource.org/licenses/MIT
 
 
 safpis is a Python library to access the South Australia Fuel Pricing
