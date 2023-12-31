@@ -1,6 +1,6 @@
 requests_cache==0.9.1
 geopy==1.13.0
-money==1.0
+money==1.3.0
 python-dateutil==2.7.0
 #pytz==2018.4
 Click==6.0
