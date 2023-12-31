@@ -13,6 +13,7 @@ safpis
      :target: https://safpis.readthedocs.io/en/latest/?version=latest
      :alt: Documentation Status
 
+.. image:: https://img.shields.io/pypi/safpis/pybadges.svg
 
 .. image:: https://pyup.io/repos/github/nathanhaigh/safpis/shield.svg
      :target: https://pyup.io/repos/github/nathanhaigh/safpis/
