@@ -44,6 +44,7 @@ jobs:
 
   coverage:
     if: github.event.schedule != '0 0 * * 0'
+    
     name: Generate test coverage report 📦
     needs:
       - test
@@ -141,9 +142,9 @@ jobs:
   # Any tagged commit will triger a publish to PyPi
   #####
   publish-to-pypi:
-    name: >-
-      Publish Python 🐍 distribution 📦 to PyPI
     if: startsWith(github.ref, 'refs/tags/')
+    
+    name: Publish Python 🐍 distribution 📦 to PyPI
     needs:
       - build
     runs-on: ubuntu-latest
