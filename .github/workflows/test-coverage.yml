@@ -24,6 +24,8 @@ jobs:
         pip install -r requirements.txt -r requirements_dev.txt
 
     - name: Run tests and coverage
+      env:
+        SAFPIS_SUBSCRIBER_TOKEN: '${{ secrets.SAFPIS_SUBSCRIBER_TOKEN }}'
       run: |
         coverage run -m unittest discover
         coverage xml -o coverage.xml
