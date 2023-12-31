@@ -25,7 +25,7 @@ jobs:
     env:
       PY_COLORS: 1
       TOX_PARALLEL_NO_SPINNER: 1
-      TOXENV: ${{ matrix.toxenv }}
+      #TOXENV: ${{ matrix.toxenv }}
 
     steps:
     - uses: actions/checkout@v4.1.1
