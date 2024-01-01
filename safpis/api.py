@@ -327,6 +327,30 @@ class SafpisAPI:
 
         return sorted_site_prices
 
+    def price(self, site_id: int, fuel_id: int):
+        """Function to return the current price of a particular fuel at a
+        particular site.
+
+        :param site_id: The ID of the site.
+        :type site_id: int
+        :param fuel_id: The ID of the fuel type.
+        :type fuel_id: int
+        :return: The price of the fuel.
+        :rtype: Decimal
+        """
+        site_prices = [
+            SitePrice(**site_price)
+            for site_price in self.get_sites_prices()["SitePrices"]
+        ]
+        filtered_site_prices = filter(
+            lambda site_price: (
+                site_price.FuelId == fuel_id and site_price.SiteId == site_id
+            ),
+            site_prices,
+        )
+        prices = list(filtered_site_prices)
+        return prices
+
 
 class APIKeyMissing(Exception):
     """Exception for a missing SAFPIS Subscriber Token.

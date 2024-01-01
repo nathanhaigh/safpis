@@ -14,6 +14,7 @@ from datetime import datetime
 from decimal import Decimal
 import os
 import configparser
+from money import Money
 
 
 class TestSafpis(TestCase):
@@ -123,6 +124,12 @@ class TestSafpis(TestCase):
         response = safpis_api.get_sites_prices()
         self.assertIsInstance(response, dict)
         self.assertIn("SitePrices", response)
+
+    def test_price(self):
+        safpis_api = SafpisAPI()
+        prices = safpis_api.price(site_id=61205460, fuel_id=2)
+        self.assertIsInstance(prices[0].Price, Money)
+        self.assertEqual(prices[0].Price.amount, Decimal("1689.0"))
 
     def test_brands_by_id(self):
         safpis_api = SafpisAPI()
