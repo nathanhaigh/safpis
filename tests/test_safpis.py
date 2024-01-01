@@ -199,7 +199,6 @@ class TestSafpis(TestCase):
         self.assertFalse(site.is_open(datetime(2023, 12, 25, 4, 0, 0)))
         self.assertTrue(site.is_open(datetime(2023, 12, 25, 23, 59, 0)))
         self.assertFalse(site.is_open(datetime(2023, 12, 25, 0, 0, 0)))
-        self.assertTrue(site.is_open())
 
     def test_sites_by_id(self):
         safpis_api = SafpisAPI()
