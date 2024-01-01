@@ -92,6 +92,8 @@ jobs:
         && .tox/lint/bin/python -m pre_commit install-hooks
         || :
     - name: Test with tox
+      env:
+        SAFPIS_SUBSCRIBER_TOKEN: '${{ secrets.SAFPIS_SUBSCRIBER_TOKEN }}'
       run: python -m tox --parallel auto --parallel-live
 
 ...
