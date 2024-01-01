@@ -144,9 +144,9 @@ commands =
   index_file = docs_dir / "index.html";\
   print("\n" + "=" * 120 +\
   f"\n\nDocumentation available under:\n\n\
-  \tfile://\{index_file\}\n\nTo serve docs, use\n\n\
+  \tfile://\\{index_file\\}\n\nTo serve docs, use\n\n\
   \t$ python3 -m http.server --directory \
-  \N\{QUOTATION MARK\}\{docs_dir\}\N\{QUOTATION MARK\} 0\n\n" +\
+  \\N\\{QUOTATION MARK\\}\\{docs_dir\\}\\N\\{QUOTATION MARK\\} 0\n\n" +\
   "=" * 120)'
 changedir = {toxinidir}/docs
 isolated_build = true
