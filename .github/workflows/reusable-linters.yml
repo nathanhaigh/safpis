@@ -4,6 +4,9 @@ name: 🚨
 
 on:  # yamllint disable-line rule:truthy
   workflow_call:
+    secrets:
+      SAFPIS_SUBSCRIBER_TOKEN:
+        required: true
 
 jobs:
   linters:

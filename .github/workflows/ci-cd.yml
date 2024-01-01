@@ -85,6 +85,8 @@ env:
 jobs:
   lint:
     uses: ./.github/workflows/reusable-linters.yml
+    secrets:
+      SAFPIS_SUBSCRIBER_TOKEN: ${{ secrets.SAFPIS_SUBSCRIBER_TOKEN }}
 
   pre-setup:
     name: ⚙️ Pre-set global build settings
