@@ -481,7 +481,7 @@ jobs:
         --skip-missing-interpreters false
         --skip-pkg-install
         -e draft-changelog
-        -qq
+        -q
         |
         tee
         '${{ needs.pre-setup.outputs.changelog-draft-name-rst }}'
