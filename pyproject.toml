@@ -1,8 +1,8 @@
 [build-system]
 requires = [
   # Essentials
-  "Cython >= 3.0.0b3; python_version >= '3.12'",  # needed by in-tree build backend `packaging/pep517_backend.py`
-  "Cython; python_version < '3.12'",              # needed by in-tree build backend `packaging/pep517_backend.py`
+#  "Cython >= 3.0.0b3; python_version >= '3.12'",  # needed by in-tree build backend `packaging/pep517_backend.py`
+#  "Cython; python_version < '3.12'",              # needed by in-tree build backend `packaging/pep517_backend.py`
   "setuptools >= 61.0",                           # needed by in-tree build backend `packaging/pep517_backend.py`
   "tomli; python_version < '3.11'",               # needed by in-tree build backend `packaging/pep517_backend.py`
   "expandvars",                                   # needed by in-tree build backend for env vars interpolation
@@ -156,7 +156,7 @@ filename = "safpis/__init__.py"
     showcontent = true
 
 [tool.setuptools_scm]
-write_to = "src/pylibsshext/_scm_version.py"
+write_to = "_scm_version.py"
 
 [project.urls]
 Documentation = "https://safpis.readthedocs.io"
