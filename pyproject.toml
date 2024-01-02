@@ -143,6 +143,9 @@ filename = "safpis/__init__.py"
     name = "Miscellaneous internal changes"
     showcontent = true
 
+[tool.setuptools_scm]
+write_to = "src/pylibsshext/_scm_version.py"
+
 [project.urls]
 Documentation = "https://safpis.readthedocs.io"
 Repository = "https://github.com/nathanhaigh/safpis.git"
