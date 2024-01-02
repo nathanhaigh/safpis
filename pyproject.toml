@@ -1,5 +1,16 @@
 [build-system]
-requires = ["setuptools >= 61.0"]
+requires = [
+  # Essentials
+  "Cython >= 3.0.0b3; python_version >= '3.12'",  # needed by in-tree build backend `packaging/pep517_backend.py`
+  "Cython; python_version < '3.12'",              # needed by in-tree build backend `packaging/pep517_backend.py`
+  "setuptools >= 61.0",                           # needed by in-tree build backend `packaging/pep517_backend.py`
+  "tomli; python_version < '3.11'",               # needed by in-tree build backend `packaging/pep517_backend.py`
+  "expandvars",                                   # needed by in-tree build backend for env vars interpolation
+
+  # Plugins
+  "setuptools_scm[toml] >= 3.5",
+  "setuptools_scm_git_archive >= 1.1",
+]
 build-backend = "setuptools.build_meta"
 
 [project]
