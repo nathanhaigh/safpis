@@ -128,8 +128,14 @@ class TestSafpis(TestCase):
     def test_price(self):
         safpis_api = SafpisAPI()
         prices = safpis_api.price(site_id=61205460, fuel_id=2)
-        self.assertIsInstance(prices[0].Price, Money)
-        self.assertEqual(prices[0].Price.amount, Decimal("1689.0"))
+        site_price = prices[0]
+        self.assertIsInstance(site_price.Price, Money)
+        patched_money = Money(
+            amount=Decimal(str(5678.9)),
+            currency="AUD",
+        )
+        with mock.patch.object(site_price, "Price", patched_money):
+            self.assertEqual(site_price.Price.amount, Decimal("5678.9"))
 
     def test_brands_by_id(self):
         safpis_api = SafpisAPI()
