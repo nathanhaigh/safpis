@@ -47,7 +47,7 @@ class Fuel:
 
 
 @dataclass
-class Site:
+class FuelStation:
     S: int
     A: str
     N: str
@@ -111,9 +111,9 @@ class Site:
                         datetime.strptime(value, "%H:%M").time(),
                     )
 
-    def distance_between(self, latitude: float, longitude: float):
-        """Function to return a distance between the site and a lat/long
-        coordinate.
+    def distance(self, latitude: float, longitude: float):
+        """Function to return a distance between the fuel station and a
+        lat/long coordinate.
         :return: Distance object
         """
         distance = geopy.distance.geodesic(
@@ -150,7 +150,7 @@ class Site:
 
 
 @dataclass
-class SitePrice:
+class FuelStationPrice:
     SiteId: int
     FuelId: int
     CollectionMethod: str

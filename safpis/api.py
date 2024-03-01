@@ -1,8 +1,6 @@
 import os
 import requests_cache
 import datetime
-from safpis.models import Brand, Fuel, Site, SitePrice
-from geopy.distance import Distance
 
 
 class SafpisAPI:
@@ -97,7 +95,7 @@ class SafpisAPI:
 
         return response
 
-    def get_country_brands(self, countryId: int = 21):
+    def GetCountryBrands(self, countryId: int = 21):
         """Sends a request to the GetCountryBrands endpoint, caching responses
         for a day.
 
@@ -116,7 +114,7 @@ class SafpisAPI:
 
         return response.json()
 
-    def get_country_geographic_regions(self, countryId: int = 21):
+    def GetCountryGeographicRegions(self, countryId: int = 21):
         """Sends a request to the GetCountryGeographicRegions endpoint, caching
         responses for a day.
 
@@ -135,7 +133,7 @@ class SafpisAPI:
 
         return response.json()
 
-    def get_country_fuel_types(self, countryId: int = 21):
+    def GetCountryFuelTypes(self, countryId: int = 21):
         """Sends a request to the GetCountryFuelTypes endpoint, caching
         responses for a day.
 
@@ -154,7 +152,7 @@ class SafpisAPI:
 
         return response.json()
 
-    def get_full_site_details(
+    def GetFullSiteDetails(
         self,
         countryId: int = 21,
         GeoRegionLevel: int = 3,
@@ -163,14 +161,15 @@ class SafpisAPI:
         """Sends a request to the GetFullSiteDetails endpoint, caching
         responses for a day.
 
-        :param countryId: The ID of the country for which site details are
-            being requested, defaults to 21 (Australia).
+        :param countryId: The ID of the country for which fuel station details
+            are being requested, defaults to 21 (Australia).
         :type countryId: int
         :param GeoRegionLevel: The level of the geographic region for which
-            site details are being requested, defaults to 3 (states).
+            fuel station details are being requested, defaults to 3 (states).
         :type GeoRegionLevel: int
-        :param GeoRegionId: The ID of the geographic region for which site
-            details are being requested, defaults to 4 (South Australia).
+        :param GeoRegionId: The ID of the geographic region for which fuel
+            station details are being requested, defaults to 4 (South
+            Australia).
         :type GeoRegionId: int
         :return: The json-encoded content of the response.
         """
@@ -188,7 +187,7 @@ class SafpisAPI:
 
         return response.json()
 
-    def get_sites_prices(
+    def GetSitesPrices(
         self,
         countryId: int = 21,
         GeoRegionLevel: int = 3,
@@ -197,14 +196,15 @@ class SafpisAPI:
         """Sends a request to the GetSitesPrices endpoint, caching
         responses for a minute.
 
-        :param countryId: The ID of the country for which site prices are
-            being requested, defaults to 21 (Australia).
+        :param countryId: The ID of the country for which fuel station prices
+            are being requested, defaults to 21 (Australia).
         :type countryId: int
         :param GeoRegionLevel: The level of the geographic region for which
-            site prices are being requested, defaults to 3 (states).
+            fuel station prices are being requested, defaults to 3 (states).
         :type GeoRegionLevel: int
-        :param GeoRegionId: The ID of the geographic region for which site
-            prices are being requested, defaults to 4 (South Australia).
+        :param GeoRegionId: The ID of the geographic region for which fuel
+            station prices are being requested, defaults to 4 (South
+            Australia).
         :type GeoRegionId: int
         :return: The json-encoded content of the response.
         """
@@ -222,134 +222,6 @@ class SafpisAPI:
         )
 
         return response.json()
-
-    def brands_by_id(self, id: int):
-        brands = [
-            Brand(**brand)
-            for brand in self.get_country_brands()["Brands"]
-            if brand["BrandId"] == id
-        ]
-        if not brands:
-            raise ValueError(f"No brand found for id: {id}")
-        return brands
-
-    def brands_by_name(self, name: str):
-        brands = [
-            Brand(**brand)
-            for brand in self.get_country_brands()["Brands"]
-            if brand["Name"] == name
-        ]
-        if not brands:
-            raise ValueError(f"No brand found for name: {name}")
-        return brands
-
-    def fuels_by_id(self, id: int):
-        fuels = [
-            Fuel(**fuel)
-            for fuel in self.get_country_fuel_types()["Fuels"]
-            if fuel["FuelId"] == id
-        ]
-        if not fuels:
-            raise ValueError(f"No fuel type found for id: {id}")
-        return fuels
-
-    def fuels_by_name(self, name: str):
-        fuels = [
-            Fuel(**fuel)
-            for fuel in self.get_country_fuel_types()["Fuels"]
-            if fuel["Name"] == name
-        ]
-        if not fuels:
-            raise ValueError(f"No fuel type found for name: {name}")
-        return fuels
-
-    def sites_by_id(self, id: int):
-        sites = [
-            Site(**site)
-            for site in self.get_full_site_details()["S"]
-            if site["S"] == id
-        ]
-        if not sites:
-            raise ValueError(f"No sites found for id: {id}")
-        return sites
-
-    def sites_by_name(self, name: str):
-        sites = [
-            Site(**site)
-            for site in self.get_full_site_details()["S"]
-            if site["N"] == name
-        ]
-        if not sites:
-            raise ValueError(f"No sites found for name: {name}")
-        return sites
-
-    def sites_by_distance(
-        self, latitude: float, longitude: float, max_distance: Distance
-    ):
-        sites = [Site(**site) for site in self.get_full_site_details()["S"]]
-        filtered_sites = filter(
-            lambda site: site.distance_between(latitude, longitude)
-            <= max_distance,
-            sites,
-        )
-        sorted_sites = sorted(
-            filtered_sites,
-            key=lambda site: site.distance_between(latitude, longitude),
-        )
-
-        return sorted_sites
-
-    def sites_open(self, datetime: datetime):
-        sites = [Site(**site) for site in self.get_full_site_details()["S"]]
-        filtered_sites = filter(lambda site: site.is_open(datetime), sites)
-
-        return list(filtered_sites)
-
-    def sites_by_cheapest_fuel_type(self, fuel_type: str):
-        """
-        Function to return a list of sites, ordered by price
-        :param fuel_type: Fuel type. Type - str
-        :return: List of Site objects
-        """
-        site_prices = [
-            SitePrice(**site_price)
-            for site_price in self.get_sites_prices()["SitePrices"]
-        ]
-        fuel_id = self.fuels_by_name(name=fuel_type)[0].FuelId
-        filtered_site_prices = filter(
-            lambda site_price: site_price.FuelId == fuel_id,
-            site_prices,
-        )
-        sorted_site_prices = sorted(
-            filtered_site_prices,
-            key=lambda site_price: site_price.Price.amount,
-        )
-
-        return sorted_site_prices
-
-    def price(self, site_id: int, fuel_id: int):
-        """Function to return the current price of a particular fuel at a
-        particular site.
-
-        :param site_id: The ID of the site.
-        :type site_id: int
-        :param fuel_id: The ID of the fuel type.
-        :type fuel_id: int
-        :return: The price of the fuel.
-        :rtype: Decimal
-        """
-        site_prices = [
-            SitePrice(**site_price)
-            for site_price in self.get_sites_prices()["SitePrices"]
-        ]
-        filtered_site_prices = filter(
-            lambda site_price: (
-                site_price.FuelId == fuel_id and site_price.SiteId == site_id
-            ),
-            site_prices,
-        )
-        prices = list(filtered_site_prices)
-        return prices
 
 
 class APIKeyMissing(Exception):
