@@ -56,14 +56,14 @@ lint/black: ## check style with black
 lint: lint/flake8 lint/black ## check style with flake8 and black
 
 test: ## run tests quickly with the default Python
-	python -m unittest discover -s tests
+	python -m unittest discover --start-directory tests
 
 test-all: ## run tests on every Python version with tox
 	tox
 
 coverage: ## check code coverage quickly with the default Python
 	coverage run -m unittest discover
-	coverage report -m
+	coverage report --show-missing
 	coverage html
 	$(BROWSER) htmlcov/index.html
 
@@ -72,12 +72,12 @@ docs: ## generate Sphinx HTML documentation, including API docs
 	rm -f docs/safpis.rst
 	rm -f docs/modules.rst
 	sphinx-apidoc -o docs/ safpis
-	$(MAKE) -C docs clean
-	$(MAKE) -C docs html
+	$(MAKE) --directory docs clean
+	$(MAKE) --directory docs html
 	$(BROWSER) docs/_build/html/index.html
 
 servedocs: docs ## compile the docs watching for changes
-	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
+	watchmedo shell-command -p '*.rst' -c '$(MAKE) --directory docs html' -R -D .
 
 release-testpypi: dist ## package and upload a release to testpypi
 	python -m twine upload --repository testpypi dist/*
