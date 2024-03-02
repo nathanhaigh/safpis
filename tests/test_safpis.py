@@ -11,13 +11,15 @@ from geopy.distance import Distance
 from datetime import datetime
 from decimal import Decimal
 from money import Money
+import os
 
 
 class TestSafpis(TestCase):
     """Tests for `safpis` package."""
 
     def setUp(self):
-        Safpis.load_token()
+        if os.path.exists("secrets.cfg"):
+            Safpis.load_token()
 
         self.fuel_station_dict = {
             "S": "61205460",
