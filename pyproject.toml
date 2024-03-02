@@ -1,18 +1,6 @@
 [build-system]
-requires = [
-  # Essentials
-  "Cython >= 3.0.0b3; python_version >= '3.12'",  # needed by in-tree build backend `packaging/pep517_backend.py`
-  "Cython; python_version < '3.12'",              # needed by in-tree build backend `packaging/pep517_backend.py`
-  "setuptools >= 61.0",                           # needed by in-tree build backend `packaging/pep517_backend.py`
-  "tomli; python_version < '3.11'",               # needed by in-tree build backend `packaging/pep517_backend.py`
-  "expandvars",                                   # needed by in-tree build backend for env vars interpolation
-
-  # Plugins
-  "setuptools_scm[toml] >= 3.5",
-  "setuptools_scm_git_archive >= 1.1",
-]
-backend-path = ["packaging"]  # requires 'Pip>=20' or 'pep517>=0.6.0'
-build-backend = "pep517_backend.hooks"
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
 
 [project]
 name = "safpis"
@@ -58,15 +46,9 @@ classifiers = [
 ]
 
 [tool]
-[tool.setuptools.dynamic]
-dependencies = {file = ["requirements.txt"]}
-version = {attr = "safpis.__version__"}
-
-[tool.setuptools.packages.find]
-where = ["."]  # list of folders that contain the packages (["."] by default)
-include = ["safpis"]  # package names should match these glob patterns (["*"] by default)
-exclude = ["packaging"]  # exclude packages matching these glob patterns (empty by default)
-namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
+[tool.pdm.version]
+source = "file"
+path = "safpis/__init__.py"
 
 [tool.black]
 line-length = 79
