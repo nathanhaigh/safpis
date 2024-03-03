@@ -1,6 +1,7 @@
 [build-system]
-requires = ["pdm-backend"]
-build-backend = "pdm.backend"
+# https://hatch.pypa.io/latest/
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
 
 [project]
 name = "safpis"
@@ -10,12 +11,12 @@ description = """
 """
 license = {text = "MIT License"}
 requires-python = ">=3.5"
-dynamic = ["dependencies", "version"]
+dynamic = ["version"]
 authors = [
     {name = "Nathan Watson-Haigh", email = "nathan@watsonhaigh.net"},
 ]
 readme = "README.rst"
-keywords = ["safpis", "two"]
+keywords = ["safpis", "South Australia", "Fuel", "Petrol"]
 classifiers = [
     # How mature is this project? Common values are
     #   3 - Alpha
@@ -45,105 +46,14 @@ classifiers = [
     "Topic :: Home Automation",
 ]
 
-[tool]
-[tool.pdm.version]
-source = "file"
-path = "safpis/__init__.py"
-
-[tool.black]
-line-length = 79
-
-[tool.bumpversion]
-current_version = "0.2.1"
-commit = true
-commit_args = "--no-verify"
-tag = true
-tag_name = "{new_version}"
-allow_dirty = true
-parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)(\\.(?P<dev>post)\\d+\\.dev\\d+)?"
-serialize = [
-    "{major}.{minor}.{patch}.{dev}{$PR_NUMBER}.dev{distance_to_latest_tag}",
-    "{major}.{minor}.{patch}"
+dependencies = [
+    "requests_cache>=0.9.1",
+    "geopy>=1.13.0",
+    "money>=1.0",
+    "python-dateutil>=2.7.0",
+    "Click>=6.0",
+    "pytz",
 ]
-message = "Version updated from {current_version} to {new_version}"
-
-[[tool.bumpversion.files]]
-filename = "safpis/__init__.py"
-
-[tool.towncrier]
-  # ATTENTION: Do not specify "package" setting because towncrier
-  # ATTENTION: tries to import it and fails if it's not pre-compiled
-  directory = "docs/changelog-fragments"
-  filename = "docs/changelog.rst"
-  issue_format = ":issue:`{issue}`"
-  package_dir = "src"
-  template = "docs/changelog-fragments/template.j2"
-  title_format = "v{version} ({project_date})"
-  underlines = ["=", "^", "-", "~"]
-
-  # NOTE: The types are declared because:
-  # NOTE: - there is no mechanism to override just the value of
-  # NOTE:   `tool.towncrier.type.misc.showcontent`;
-  # NOTE: - and, we want to declare extra non-default types for
-  # NOTE:   clarity and flexibility.
-
-  [[tool.towncrier.section]]
-    path = ""
-
-  [[tool.towncrier.type]]
-    # Something we deemed an improper undesired behavior that got corrected
-    # in the release to match pre-agreed expectations.
-    directory = "bugfix"
-    name = "Bug fixes"
-    showcontent = true
-
-  [[tool.towncrier.type]]
-    # New behaviors, public APIs. That sort of stuff.
-    directory = "feature"
-    name = "Features"
-    showcontent = true
-
-  [[tool.towncrier.type]]
-    # Declarations of future API removals and breaking changes in behavior.
-    directory = "deprecation"
-    name = "Deprecations (removal in next major release)"
-    showcontent = true
-
-  [[tool.towncrier.type]]
-    # When something public gets removed in a breaking way. Could be
-    # deprecated in an earlier release.
-    directory = "breaking"
-    name = "Removals and backward incompatible breaking changes"
-    showcontent = true
-
-  [[tool.towncrier.type]]
-    # Notable updates to the documentation structure or build process.
-    directory = "doc"
-    name = "Improved documentation"
-    showcontent = true
-
-  [[tool.towncrier.type]]
-    # Notes for downstreams about unobvious side effects and tooling. Changes
-    # in the test invocation considerations and runtime assumptions.
-    directory = "packaging"
-    name = "Packaging updates and notes for downstreams"
-    showcontent = true
-
-  [[tool.towncrier.type]]
-    # Stuff that affects the contributor experience. e.g. Running tests,
-    # building the docs, setting up the development environment.
-    directory = "contrib"
-    name = "Contributor-facing changes"
-    showcontent = true
-
-  [[tool.towncrier.type]]
-    # Changes that are hard to assign to any of the above categories.
-    directory = "misc"
-    name = "Miscellaneous internal changes"
-    showcontent = true
-
-[tool.setuptools_scm]
-write_to = "_scm_version.py"
 
 [project.urls]
 Documentation = "https://safpis.readthedocs.io"
@@ -151,3 +61,118 @@ Repository = "https://github.com/nathanhaigh/safpis.git"
 Issues = "https://github.com/nathanhaigh/safpis/issues"
 History = "https://github.com/nathanhaigh/safpis/blob/main/HISTORY.rst"
 
+[tool]
+
+[tool.hatch]
+
+[tool.hatch.version]
+#path = "safpis/__init__.py"
+source = "vcs"
+
+[tool.hatch.envs.docs]
+description = """
+For building documentation
+"""
+dependencies = [
+  "Sphinx",
+  "setuptools",
+]
+[tool.hatch.envs.docs.scripts]
+build = [
+    "sphinx-apidoc --output-dir docs/ safpis",
+    "make --directory docs/ clean",
+    "make --directory docs/ html",
+]
+watch = "watchmedo shell-command  --pattern '*.rst' --command 'make --directory docs html' --recursive --ignore-directories ."
+
+[tool.hatch.envs.lint]
+description = """
+For running static tests
+"""
+dependencies = [
+  "mypy>=1.0.0",
+  "ruff>=0.0.243",
+]
+
+[[tool.hatch.envs.lint.matrix]]
+python = ["3.11"]
+
+[tool.hatch.envs.lint.scripts]
+typing = "mypy --install-types --non-interactive {args} safpis tests"
+linting = "ruff check {args} safpis tests"
+format = "ruff format --check {args} safpis tests"
+style = [
+  "typing",
+  "linting",
+  "format",
+]
+restyle = [
+  "ruff format {args} safpis tests",
+  "style",
+]
+
+[tool.hatch.envs.test]
+description = """
+For running unit tests
+"""
+dependencies = [
+  "coverage[toml]>=7.3.4",
+  "setuptools",
+  "pytest",
+]
+
+[[tool.hatch.envs.test.matrix]]
+python = ["3.8", "3.9", "3.10", "3.11", "3.12"]
+
+[tool.hatch.envs.test.scripts]
+unittest = "python -m unittest discover --start-directory tests"
+cov = [
+    "coverage run --module unittest discover",
+    "coverage report --show-missing",
+    "coverage html",
+]
+
+[[tool.mypy.overrides]]
+module = [
+    "geopy.distance",
+    "money",
+    "pytest",
+]
+ignore_missing_imports = true
+
+[tool.coverage.run]
+branch = true
+omit = [
+    "tests/*"
+]
+
+[tool.coverage.report]
+# Regexes for lines to exclude from consideration
+exclude_also = [
+    # Don't complain about missing debug-only code:
+    "def __repr__",
+    "if self\\.debug",
+
+    # Don't complain if tests don't hit defensive assertion code:
+    "raise AssertionError",
+    "raise NotImplementedError",
+
+    # Don't complain if non-runnable code isn't run:
+    "if 0:",
+    "if __name__ == .__main__.:",
+
+    # Don't complain about abstract methods, they aren't run:
+    "@(abc\\.)?abstractmethod",
+    ]
+
+ignore_errors = true
+
+[tool.coverage.html]
+directory = "coverage_html_report"
+
+[tool.ruff]
+#https://hatch.pypa.io/1.9/config/static-analysis/#default-settings
+extend = "ruff_defaults.toml"
+
+[tool.hatch.envs.hatch-static-analysis]
+config-path = "ruff_defaults.toml"
