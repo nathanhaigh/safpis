@@ -66,12 +66,12 @@ jobs:
       - check
     runs-on: ubuntu-latest
     steps:
-      - name: Download build artifacts
+      - name: Download distribution 📦 artifacts
         uses: actions/download-artifact@v4
         with:
           name: python-package-distributions
           path: dist/
-      - name: Push build artifacts to PyPI
+      - name: Publish distribution 📦 to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
 
   publish-testpypi:
@@ -86,10 +86,12 @@ jobs:
       contents: read  # This job doesn't need to `git push` anything
       id-token: write  # Mandatory for trusted publishing
     steps:
-      - name: Download build artifacts
+      - name: Download distribution 📦 artifacts
         uses: actions/download-artifact@v4
         with:
           name: python-package-distributions
           path: dist/
-      - name: Push build artifacts to TestPyPI
+      - name: Publish distribution 📦 to TestPyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
