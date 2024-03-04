@@ -17,8 +17,13 @@ cov = [
 ]
 
 [version]
-#path = "safpis/__init__.py"
 source = "vcs"
+
+[build.hooks.vcs]
+version-file = "safpis/_version.py"
+
+[version.raw-options]
+local_scheme = "no-local-version"
 
 [envs.docs]
 description = """
