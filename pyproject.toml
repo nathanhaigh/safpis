@@ -107,6 +107,3 @@ extend = "ruff_defaults.toml"
 
 [tool.hatch.envs.hatch-static-analysis]
 config-path = "ruff_defaults.toml"
-
-[tool.cibuildwheel]
-test-command = "hatch run test:unittest"

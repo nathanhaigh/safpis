@@ -3,76 +3,95 @@ name: build
 
 on:
   push:
-    tags:
-    - v*
     branches:
-        - main
-        - "!dependabot/**"
-
+    - >-
+      **
+    - >-
+      !dependabot/**
+    - >-
+      !pre-commit-ci-update-config
+    tags-ignore:
+    - >-
+      **
+  pull_request:
+    paths-ignore:
+    - docs/**.rst
 
 concurrency:
   group: build-${{ github.head_ref }}
 
 jobs:
+  lint:
+    uses: ./.github/workflows/test.yml
+    secrets:
+      SAFPIS_SUBSCRIBER_TOKEN: ${{ secrets.SAFPIS_SUBSCRIBER_TOKEN }}
+
   build:
-    name: Build wheels and source distribution
+    name: Build distribution 📦
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Install build dependencies
-      run: python -m pip install --upgrade build
+      - name: Install build dependencies
+        run: python -m pip install --upgrade build
 
-    - name: Build
-      run: python -m build
+      - name: Build a wheel and source tarball
+        run: python -m build
 
-    - uses: actions/upload-artifact@v3
-      with:
-        name: python-package-distributions
-        path: dist/*
-        if-no-files-found: error
+      - name: Store distribution 📦
+        uses: actions/upload-artifact@v3
+        with:
+          name: python-package-distributions
+          path: dist/
+          if-no-files-found: error
 
-  build_wheels:
-    name: Build wheels on ${{ matrix.os }}
+  check:
+    if: always()
     needs:
+      - lint
       - build
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        # macos-13 is an intel runner, macos-14 is apple silicon
-        os: [ubuntu-latest, windows-latest, macos-13, macos-14]
+    runs-on: Ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Build wheels
-        uses: pypa/cibuildwheel@v2.16.5
-        env:
-          CIBW_TEST_COMMAND: hatch run test:unittest
+      - name: Decide whether the needed jobs succeeded or failed
+        uses: re-actors/alls-green@release/v1
         with:
-          package-dir: .
-          output-dir: wheelhouse
-          config-file: "{package}/pyproject.toml"
-      - uses: actions/upload-artifact@v4
-        with:
-          name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
-          path: ./wheelhouse/*.whl
+          jobs: ${{ toJSON(needs) }}
 
-  publish:
-    name: Publish release
+  publish-pypi:
+    name: Publish Python 🐍 distribution 📦 to PyPI
+    if: startsWith(github.ref, 'refs/tags/')  # only publish to PyPI on tag pushes
     needs:
-    - build
+      - check
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/download-artifact@v3
-      with:
-        name: artifacts
-        path: dist
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: python-package-distributions
+          path: dist/
+      - name: Push build artifacts to PyPI
+        uses: pypa/gh-action-pypi-publish@v1.6.4
 
-    - name: Push build artifacts to PyPI
-      uses: pypa/gh-action-pypi-publish@v1.6.4
-      with:
-        skip_existing: true
-        user: __token__
-        password: ${{ secrets.PYPI_API_TOKEN }}
+  publish-testpypi:
+    name: Publish Python 🐍 distribution 📦 to TestPyPI
+    needs:
+      - check
+    runs-on: ubuntu-latest
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/project/nathanhaigh-safpis
+    permissions:
+      contents: read  # This job doesn't need to `git push` anything
+      id-token: write  # Mandatory for trusted publishing
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: python-package-distributions
+          path: dist/
+      - name: Push build artifacts to TestPyPI
+        uses: pypa/gh-action-pypi-publish@v1.6.4
+        with:
+          repository-url: https://test.pypi.org/legacy/
