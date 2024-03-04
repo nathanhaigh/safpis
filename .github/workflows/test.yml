@@ -17,7 +17,7 @@ env:
 
 jobs:
   run:
-    name: Python ${{ matrix.python-version }} on ${{ startsWith(matrix.os, 'macos-') && 'macOS' || startsWith(matrix.os, 'windows-') && 'Windows' || 'Linux' }}
+    name: 🐍 ${{ matrix.python-version }} on ${{ startsWith(matrix.os, 'macos-') && 'macOS' || startsWith(matrix.os, 'windows-') && 'Windows' || 'Linux' }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -28,21 +28,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up 🐍 ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install Hatch
+      - name: Install 🐣
         run: pip install --upgrade hatch
 
-      - if: matrix.python-version == '3.9' && runner.os == 'Linux'
-        name: Lint
+      - name: Lint using 🐍 ${{ matrix.python-version }} on ${{ runner.os }} 
+        if: matrix.python-version == '3.9' && runner.os == 'Linux'
         env:
           SAFPIS_SUBSCRIBER_TOKEN: ${{ secrets.SAFPIS_SUBSCRIBER_TOKEN }}
         run: hatch run lint:style
 
-      - name: Run tests
+      - name: Run 🧪 coverage
         env:
           SAFPIS_SUBSCRIBER_TOKEN: ${{ secrets.SAFPIS_SUBSCRIBER_TOKEN }}
         run: hatch run cov

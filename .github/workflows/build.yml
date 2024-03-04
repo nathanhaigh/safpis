@@ -60,7 +60,7 @@ jobs:
           jobs: ${{ toJSON(needs) }}
 
   publish-pypi:
-    name: PyPI - Publish Python 🐍 distribution 📦
+    name: PyPI - Publish 🐍 distribution 📦
     if: startsWith(github.ref, 'refs/tags/')  # only publish to PyPI on tag pushes
     needs:
       - check
@@ -75,13 +75,13 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
 
   publish-testpypi:
-    name: TestPyPI - Publish Python 🐍 distribution 📦
+    name: TestPyPI - Publish 🐍 distribution 📦
     needs:
       - check
     runs-on: ubuntu-latest
     environment:
       name: testpypi
-      url: https://test.pypi.org/project/nathanhaigh-safpis
+      url: https://test.pypi.org/project/safpis
     permissions:
       contents: read  # This job doesn't need to `git push` anything
       id-token: write  # Mandatory for trusted publishing
