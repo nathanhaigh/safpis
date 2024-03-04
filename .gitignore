@@ -110,3 +110,6 @@ secrets.cfg
 
 # Ignore swap files
 *.swp
+
+# Ignore hatch version-file
+safpis/_version.py
