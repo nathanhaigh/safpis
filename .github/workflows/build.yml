@@ -5,6 +5,10 @@ on:
   push:
     tags:
     - v*
+    branches:
+        - main
+        - "!dependabot/**"
+
 
 concurrency:
   group: build-${{ github.head_ref }}
