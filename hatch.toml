@@ -7,7 +7,7 @@ dependencies = [
 ]
 [envs.default.scripts]
 test = "pytest {args:tests}"
-cov = "pytest --cov=safpis --cov-branch --cov-report=xml:tests/coverage.xml --junitxml="tests/result.xml" {args:tests}"
+cov = "pytest --cov=safpis --cov-branch --cov-report=xml:tests/coverage.xml --junitxml=tests/result.xml {args:tests}"
 
 [version]
 source = "vcs"
