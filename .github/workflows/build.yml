@@ -33,36 +33,30 @@ jobs:
         path: dist/*
         if-no-files-found: error
 
-  build-bin-manylinux-tested-arches:
-    name: 👷 manylinux${{ matrix.manylinux-year-target}}-${{ matrix.manylinux-image-target.arch}} 📦 ${{ needs.pre-setup.outputs.git-tag }} for 🐍 ${{ matrix.manylinux-python-target }}
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }}
     needs:
-        - build
-    runs-on: ubuntu-latest
+      - build
+    runs-on: ${{ matrix.os }}
     strategy:
-        matrix:
-            manylinux-python-target:
-                # NOTE: Must be from this list:
-                # NOTE: $ podman run -it --rm \
-                # NOTE:   quay.io/pypa/manylinux2014_x86_64 \
-                # NOTE:   ls -1 /opt/python
-                - cp36-cp36m
-                - cp37-cp37m
-                - cp38-cp38
-                - cp39-cp39
-                - cp310-cp310
-                - cp311-cp311
-                - cp312-cp312
-
+      matrix:
+        # macos-13 is an intel runner, macos-14 is apple silicon
+        os: [ubuntu-latest, windows-latest, macos-13, macos-14]
     steps:
-        - name: Switch to using Python 3.11 by default
-          uses: actions/setup-python@v4.7.1
-          with:
-            python-version: 3.11
-        - name: Retrieve the project source from an sdist inside the GHA artifact
-          uses: re-actors/checkout-python-sdist@release/v1
-          with:
-            source-tarball-name: "*.tar.gz"
-            workflow-artifact-name: python-package-distributions
+      - uses: actions/checkout@v4
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.16.5
+        env:
+          CIBW_TEST_COMMAND: hatch run test:unittest
+        with:
+          package-dir: .
+          output-dir: wheelhouse
+          config-file: "{package}/pyproject.toml"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
+          path: ./wheelhouse/*.whl
 
   publish:
     name: Publish release
