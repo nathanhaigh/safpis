@@ -33,6 +33,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          # Fetch all history so "hatch version" can determine the
+          # correct dev version from git
+          fetch-depth: 0
 
       - name: Set up 🐍 3.12
         uses: actions/setup-python@v5
@@ -42,7 +46,7 @@ jobs:
       - name: Install 🐣
         run: pip install --upgrade hatch
 
-      - name: Build a wheel and source tarball
+      - name: Build a 🛞 and source tarball
         run: hatch build
 
       - name: Store distribution 📦
