@@ -1,0 +1,84 @@
+[envs.default]
+dependencies = [
+  "coverage[toml]",
+  "pytest",
+  "setuptools",
+]
+[envs.default.scripts]
+test = "pytest {args:tests}"
+test-cov = "coverage run -m pytest {args:tests}"
+cov-report = [
+  "- coverage combine",
+  "coverage report --show-missing",
+]
+cov = [
+  "test-cov",
+  "cov-report",
+]
+
+[version]
+#path = "safpis/__init__.py"
+source = "vcs"
+
+[envs.docs]
+description = """
+For building documentation
+"""
+dependencies = [
+  "Sphinx",
+  "setuptools",
+]
+[envs.docs.scripts]
+build = [
+    "sphinx-apidoc --output-dir docs/ safpis",
+    "make --directory docs/ clean",
+    "make --directory docs/ html",
+]
+watch = "watchmedo shell-command  --pattern '*.rst' --command 'make --directory docs html' --recursive --ignore-directories ."
+
+[envs.lint]
+description = """
+For running static tests
+"""
+dependencies = [
+  "mypy>=1.0.0",
+  "ruff>=0.0.243",
+]
+
+[[envs.lint.matrix]]
+python = ["3.11"]
+
+[envs.lint.scripts]
+typing = "mypy --install-types --non-interactive {args} safpis tests"
+linting = "ruff check {args} safpis tests"
+format = "ruff format --check {args} safpis tests"
+style = [
+  "typing",
+  "linting",
+  "format",
+]
+restyle = [
+  "ruff format {args} safpis tests",
+  "style",
+]
+
+[envs.test]
+description = """
+For running unit tests
+"""
+dependencies = [
+  "coverage[toml]>=7.3.4",
+  "setuptools",
+  "pytest",
+]
+
+[[envs.test.matrix]]
+python = ["3.8", "3.9", "3.10", "3.11", "3.12"]
+
+[envs.test.scripts]
+unittest = "python -m unittest discover --start-directory tests"
+cov = [
+    "coverage run --module unittest discover",
+    "coverage report --show-missing",
+    "coverage html",
+]
