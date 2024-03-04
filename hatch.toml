@@ -25,6 +25,9 @@ version-file = "safpis/_version.py"
 [version.raw-options]
 local_scheme = "no-local-version"
 
+[envs.hatch-static-analysis]
+config-path = "ruff_defaults.toml"
+
 [envs.docs]
 description = """
 For building documentation

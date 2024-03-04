@@ -104,6 +104,3 @@ directory = "coverage_html_report"
 [tool.ruff]
 #https://hatch.pypa.io/1.9/config/static-analysis/#default-settings
 extend = "ruff_defaults.toml"
-
-[tool.hatch.envs.hatch-static-analysis]
-config-path = "ruff_defaults.toml"
