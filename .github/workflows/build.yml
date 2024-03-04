@@ -29,9 +29,40 @@ jobs:
 
     - uses: actions/upload-artifact@v3
       with:
-        name: artifacts
+        name: python-package-distributions
         path: dist/*
         if-no-files-found: error
+
+  build-bin-manylinux-tested-arches:
+    name: 👷 manylinux${{ matrix.manylinux-year-target}}-${{ matrix.manylinux-image-target.arch}} 📦 ${{ needs.pre-setup.outputs.git-tag }} for 🐍 ${{ matrix.manylinux-python-target }}
+    needs:
+        - build
+    runs-on: ubuntu-latest
+    strategy:
+        matrix:
+            manylinux-python-target:
+                # NOTE: Must be from this list:
+                # NOTE: $ podman run -it --rm \
+                # NOTE:   quay.io/pypa/manylinux2014_x86_64 \
+                # NOTE:   ls -1 /opt/python
+                - cp36-cp36m
+                - cp37-cp37m
+                - cp38-cp38
+                - cp39-cp39
+                - cp310-cp310
+                - cp311-cp311
+                - cp312-cp312
+
+    steps:
+        - name: Switch to using Python 3.11 by default
+          uses: actions/setup-python@v4.7.1
+          with:
+            python-version: 3.11
+        - name: Retrieve the project source from an sdist inside the GHA artifact
+          uses: re-actors/checkout-python-sdist@release/v1
+          with:
+            source-tarball-name: *.tar.gz
+            workflow-artifact-name: python-package-distributions
 
   publish:
     name: Publish release
