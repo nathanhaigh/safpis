@@ -51,12 +51,11 @@ jobs:
         run: hatch run cov
 
       - name: Upload coverage to Codecov
+        if: matrix.python-version == '3.12' && runner.os == 'Linux'
         uses: codecov/codecov-action@v4
         with:
-          #directory: ./coverage/reports/
           env_vars: OS,PYTHON
           fail_ci_if_error: true
-          #files: ./coverage1.xml,./coverage2.xml,!./cache
           flags: unittests
           name: codecov-umbrella
           token: ${{ secrets.CODECOV_TOKEN }}
