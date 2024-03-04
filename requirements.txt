@@ -1,6 +1,0 @@
-requests_cache>=0.9.1
-geopy>=1.13.0
-money>=1.0
-python-dateutil>=2.7.0
-Click>=6.0
-setuptools; python_version >= "3.12"
