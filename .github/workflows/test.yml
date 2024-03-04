@@ -6,6 +6,8 @@ on:
     secrets:
       SAFPIS_SUBSCRIBER_TOKEN:
         required: true
+      CODECOV_TOKEN:
+        required: true
 
 concurrency:
   group: test-${{ github.head_ref }}

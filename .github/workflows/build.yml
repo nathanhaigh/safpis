@@ -25,6 +25,7 @@ jobs:
     uses: ./.github/workflows/test.yml
     secrets:
       SAFPIS_SUBSCRIBER_TOKEN: ${{ secrets.SAFPIS_SUBSCRIBER_TOKEN }}
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   build:
     name: Build distribution 📦
