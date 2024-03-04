@@ -1,6 +1,7 @@
-import os
-import requests_cache
-import datetime
+from datetime import timedelta
+from os import environ
+
+from requests_cache import CachedSession
 
 
 class SafpisAPI:
@@ -8,42 +9,35 @@ class SafpisAPI:
 
     def __init__(self) -> None:
         """Constructor method"""
-        self.base_url = (
-            "https://" "fppdirectapi-prod.safuelpricinginformation.com.au"
-        )
+        self.base_url = "https://" "fppdirectapi-prod.safuelpricinginformation.com.au"
         self.__country_id = 21  # 21 = Australia
         self.__geo_region_level = 3  # 3 = States
         self.__geo_region_id = 4  # 4 = South Australia
 
         try:
-            subscriber_token = os.environ.get("SAFPIS_SUBSCRIBER_TOKEN")
+            subscriber_token = environ.get("SAFPIS_SUBSCRIBER_TOKEN")
             if not subscriber_token:
-                raise APIKeyMissing(
-                    "Environmental variable SAFPIS_SUBSCRIBER_TOKEN is set "
-                    "but empty."
-                )
-        except KeyError:
-            raise APIKeyMissing(
-                "Environmental variable SAFPIS_SUBSCRIBER_TOKEN is not set."
-            )
+                raise APIKeyMissingError
+        except KeyError as exc:
+            raise APIKeyMissingError from exc
 
         self.__token = subscriber_token
 
-        self.cached_session_day = requests_cache.CachedSession(
+        self.cached_session_day = CachedSession(
             "safpis_cache_day",
             use_cache_dir=True,
             cache_control=True,
-            expire_after=datetime.timedelta(days=1),
+            expire_after=timedelta(days=1),
             allowable_codes=[200, 400],
             allowable_methods=["GET"],
             stale_if_error=False,
         )
 
-        self.cached_session_minute = requests_cache.CachedSession(
+        self.cached_session_minute = CachedSession(
             "safpis_cache_minute",
             use_cache_dir=True,
             cache_control=True,
-            expire_after=datetime.timedelta(minutes=1),
+            expire_after=timedelta(minutes=1),
             allowable_codes=[200, 400],
             allowable_methods=["GET"],
             stale_if_error=False,
@@ -66,11 +60,11 @@ class SafpisAPI:
         :param params: Request Parameters.
         :type params: dict
         :param cache: The cache used for the request, defaults to 'day'.  It
-             can be 'day' or 'minute'.
+                can be 'day' or 'minute'.
         :type cache: str
         :raises ValueError: if :param cache: value is not recognised.
         :raises HTTPError: if the HTTP response is a 4XX client or 5XX server
-            error response.
+                error response.
         :return: The request response.
         :rtype: requests.Response
         """
@@ -100,7 +94,7 @@ class SafpisAPI:
         for a day.
 
         :param countryId: The ID of the country for which fuel brands are being
-            requested, defaults to 21 (Australia).
+                requested, defaults to 21 (Australia).
         :type countryId: int
         :return: The json-encoded content of the response.
         """
@@ -119,7 +113,7 @@ class SafpisAPI:
         responses for a day.
 
         :param countryId: The ID of the country for which geographic regions
-            are being requested, defaults to 21 (Australia).
+                are being requested, defaults to 21 (Australia).
         :type countryId: int
         :return: The json-encoded content of the response.
         """
@@ -138,7 +132,7 @@ class SafpisAPI:
         responses for a day.
 
         :param countryId: The ID of the country for which fuel types are being
-            requested, defaults to 21 (Australia).
+                requested, defaults to 21 (Australia).
         :type countryId: int
         :return: The json-encoded content of the response.
         """
@@ -162,14 +156,14 @@ class SafpisAPI:
         responses for a day.
 
         :param countryId: The ID of the country for which fuel station details
-            are being requested, defaults to 21 (Australia).
+                are being requested, defaults to 21 (Australia).
         :type countryId: int
         :param GeoRegionLevel: The level of the geographic region for which
-            fuel station details are being requested, defaults to 3 (states).
+                fuel station details are being requested, defaults to 3 (states).
         :type GeoRegionLevel: int
         :param GeoRegionId: The ID of the geographic region for which fuel
-            station details are being requested, defaults to 4 (South
-            Australia).
+                station details are being requested, defaults to 4 (South
+                Australia).
         :type GeoRegionId: int
         :return: The json-encoded content of the response.
         """
@@ -197,14 +191,14 @@ class SafpisAPI:
         responses for a minute.
 
         :param countryId: The ID of the country for which fuel station prices
-            are being requested, defaults to 21 (Australia).
+                are being requested, defaults to 21 (Australia).
         :type countryId: int
         :param GeoRegionLevel: The level of the geographic region for which
-            fuel station prices are being requested, defaults to 3 (states).
+                fuel station prices are being requested, defaults to 3 (states).
         :type GeoRegionLevel: int
         :param GeoRegionId: The ID of the geographic region for which fuel
-            station prices are being requested, defaults to 4 (South
-            Australia).
+                station prices are being requested, defaults to 4 (South
+                Australia).
         :type GeoRegionId: int
         :return: The json-encoded content of the response.
         """
@@ -224,11 +218,12 @@ class SafpisAPI:
         return response.json()
 
 
-class APIKeyMissing(Exception):
+class APIKeyMissingError(Exception):
     """Exception for a missing SAFPIS Subscriber Token.
 
     The SAFPIS Subscriber Token should be specified in the environmental
     variable 'SAFPIS_SUBSCRIBER_TOKEN'.
     """
 
-    pass
+    def __init__(self) -> None:
+        super().__init__("Environmental variable SAFPIS_SUBSCRIBER_TOKEN is missing.")

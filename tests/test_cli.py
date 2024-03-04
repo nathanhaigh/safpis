@@ -1,14 +1,12 @@
-#!/usr/bin/env python
-
 """Tests for `safpis` package."""
 
-
+import configparser
+import os
 from unittest import TestCase
+
 from click.testing import CliRunner
 
 from safpis import cli
-import os
-import configparser
 
 
 class TestCli(TestCase):
@@ -19,9 +17,7 @@ class TestCli(TestCase):
         if os.path.exists(secret_config_file):
             config = configparser.ConfigParser()
             config.read(secret_config_file)
-            os.environ["SAFPIS_SUBSCRIBER_TOKEN"] = config["TEST"][
-                "SAFPIS_SUBSCRIBER_TOKEN"
-            ]
+            os.environ["SAFPIS_SUBSCRIBER_TOKEN"] = config["TEST"]["SAFPIS_SUBSCRIBER_TOKEN"]
 
     def tearDown(self):
         """Tear down test fixtures, if any."""

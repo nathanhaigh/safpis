@@ -1,13 +1,13 @@
-#!/usr/bin/env python
-
 """Tests for `safpis` package."""
 
-
+import configparser
+import os
 from unittest import TestCase, mock
 
-from safpis.api import SafpisAPI, APIKeyMissing
-import os
-import configparser
+import pytest
+import requests
+
+from safpis.api import APIKeyMissingError, SafpisAPI
 
 
 class TestApi(TestCase):
@@ -18,9 +18,7 @@ class TestApi(TestCase):
         if os.path.exists(secret_config_file):
             config = configparser.ConfigParser()
             config.read(secret_config_file)
-            os.environ["SAFPIS_SUBSCRIBER_TOKEN"] = config["TEST"][
-                "SAFPIS_SUBSCRIBER_TOKEN"
-            ]
+            os.environ["SAFPIS_SUBSCRIBER_TOKEN"] = config["TEST"]["SAFPIS_SUBSCRIBER_TOKEN"]
 
         self.fuel_station_dict = {
             "S": "61205460",
@@ -65,55 +63,55 @@ class TestApi(TestCase):
 
     @mock.patch.dict(os.environ, {"fake_key": "fake"}, clear=True)
     def test_token_None(self):
-        with self.assertRaises(APIKeyMissing):
+        with pytest.raises(APIKeyMissingError):
             SafpisAPI()
 
     @mock.patch.dict(os.environ, {"SAFPIS_SUBSCRIBER_TOKEN": ""})
     def test_token_empty(self):
-        with self.assertRaises(APIKeyMissing):
+        with pytest.raises(APIKeyMissingError):
             SafpisAPI()
 
     def test_token_valid(self):
         api = SafpisAPI()
-        self.assertIsInstance(api, SafpisAPI)
+        assert isinstance(api, SafpisAPI)
 
     @mock.patch.dict(os.environ, {"SAFPIS_SUBSCRIBER_TOKEN": "INVALID-TOKEN"})
     def test_token_invalid(self):
         api = SafpisAPI()
-        self.assertIsInstance(api, SafpisAPI)
+        assert isinstance(api, SafpisAPI)
 
     def test_GetCountryBrands(self):
         api = SafpisAPI()
         response = api.GetCountryBrands()
-        self.assertIsInstance(response, dict)
-        self.assertIn("Brands", response)
+        assert isinstance(response, dict)
+        assert "Brands" in response
 
     @mock.patch.dict(os.environ, {"SAFPIS_SUBSCRIBER_TOKEN": "INVALID-TOKEN"})
     def test_GetCountryBrands_invalid_token(self):
         api = SafpisAPI()
-        with self.assertRaises(Exception):
+        with pytest.raises(requests.exceptions.HTTPError):
             api.GetCountryBrands()
 
     def test_GetCountryGeographicRegions(self):
         api = SafpisAPI()
         response = api.GetCountryGeographicRegions()
-        self.assertIsInstance(response, dict)
-        self.assertIn("GeographicRegions", response)
+        assert isinstance(response, dict)
+        assert "GeographicRegions" in response
 
     def test_GetCountryFuelTypes(self):
         api = SafpisAPI()
         response = api.GetCountryFuelTypes()
-        self.assertIsInstance(response, dict)
-        self.assertIn("Fuels", response)
+        assert isinstance(response, dict)
+        assert "Fuels" in response
 
     def test_GetFullSiteDetails(self):
         api = SafpisAPI()
         response = api.GetFullSiteDetails()
-        self.assertIsInstance(response, dict)
-        self.assertIn("S", response)
+        assert isinstance(response, dict)
+        assert "S" in response
 
     def test_GetSitesPrices(self):
         api = SafpisAPI()
         response = api.GetSitesPrices()
-        self.assertIsInstance(response, dict)
-        self.assertIn("SitePrices", response)
+        assert isinstance(response, dict)
+        assert "SitePrices" in response

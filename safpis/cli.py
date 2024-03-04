@@ -1,14 +1,16 @@
 """Console script for safpis."""
+
 import sys
+
 import click
+
 from safpis.api import SafpisAPI
 
 
 @click.group()
-def main(args=None):
+def main():
     """Command line interface to the South Australia Fuel Pricing Information
     Scheme (SAFPIS)."""
-    pass
 
 
 #####
@@ -17,16 +19,16 @@ def main(args=None):
 @main.command()
 @click.option("--id", type=int, help="Fuel station site ID.")
 @click.option("--name", type=str, help="Fuel station site name.")
-def site(id, name):
+def site(site_id, name):
     """Get fuel station site information."""
-    if (not id and not name) or (id and name):
+    if (not site_id and not name) or (site_id and name):
         click.echo("Error: You must provide either --id or --name.")
         return
 
     safpis_api = SafpisAPI()
 
-    if id:
-        sites = safpis_api.sites_by_id(id=id)
+    if site_id:
+        sites = safpis_api.sites_by_id(site_id)
     elif name:
         sites = safpis_api.sites_by_name(name=name)
     click.echo(sites[0])
@@ -38,16 +40,16 @@ def site(id, name):
 @main.command()
 @click.option("--id", type=int, help="Fuel station brand ID.")
 @click.option("--name", type=str, help="Fuel station brand name.")
-def brand(id, name):
+def brand(brand_id, name):
     """Get fuel station brand information."""
-    if (not id and not name) or (id and name):
+    if (not brand_id and not name) or (brand_id and name):
         click.echo("Error: You must provide either --id or --name.")
         return
 
     safpis_api = SafpisAPI()
 
-    if id:
-        brands = safpis_api.brands_by_id(id=id)
+    if brand_id:
+        brands = safpis_api.brands_by_id(brand_id)
     elif name:
         brands = safpis_api.brands_by_name(name=name)
     click.echo(brands[0])
@@ -59,18 +61,18 @@ def brand(id, name):
 @main.command()
 @click.option("--id", type=int, help="Fuel ID.")
 @click.option("--name", type=str, help="Fuel name.")
-def fuel(id, name):
+def fuel(fuel_id, name):
     """Get fuel information."""
-    if (not id and not name) or (id and name):
+    if (not fuel_id and not name) or (fuel_id and name):
         click.echo("Error: You must provide either --id or --name.")
         return
 
     safpis_api = SafpisAPI()
 
-    if id:
-        fuels = safpis_api.fuels_by_id(id=id)
+    if fuel_id:
+        fuels = safpis_api.fuels_by_id(fuel_id)
     elif name:
-        fuels = safpis_api.fuels_by_name(name=name)
+        fuels = safpis_api.fuels_by_name(name)
     click.echo(fuels[0])
 
 
@@ -88,7 +90,7 @@ def price(site_id, fuel_id):
 
     safpis_api = SafpisAPI()
 
-    price = safpis_api.price(site_id=site_id, fuel_id=fuel_id)
+    price = safpis_api.price(site_id, fuel_id)
     click.echo(price[0])
 
 

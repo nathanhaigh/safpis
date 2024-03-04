@@ -1,10 +1,13 @@
-from datetime import datetime, time
-import geopy.distance
-from money import Money
+from __future__ import annotations
+
 from dataclasses import dataclass, field
-from typing import Optional
-from dateutil import parser
+from datetime import datetime, time
 from decimal import Decimal
+
+import pytz
+from dateutil import parser
+from geopy.distance import geodesic
+from money import Money
 
 
 @dataclass
@@ -32,7 +35,7 @@ class Region:
     GeoRegionLevel: int
     Name: int
     Abbrev: str
-    GeoRegionParentId: Optional[int] = field(default=None)
+    GeoRegionParentId: int | None = field(default=None)
 
 
 @dataclass
@@ -78,11 +81,13 @@ class FuelStation:
     SUC: time
 
     def __post_init__(self):
+        adl_tz = pytz.timezone("Australia/Adelaide")
+
         if isinstance(self.M, str):
             try:
-                self.M = datetime.strptime(self.M, "%Y-%m-%dT%H:%M:%S.%f")
+                self.M = datetime.strptime(self.M, "%Y-%m-%dT%H:%M:%S.%f").replace(tzinfo=adl_tz)
             except ValueError:
-                self.M = datetime.strptime(self.M, "%Y-%m-%dT%H:%M:%S")
+                self.M = datetime.strptime(self.M, "%Y-%m-%dT%H:%M:%S").replace(tzinfo=adl_tz)
 
         for variable_name in [
             "MO",
@@ -108,7 +113,7 @@ class FuelStation:
                     setattr(
                         self,
                         variable_name,
-                        datetime.strptime(value, "%H:%M").time(),
+                        datetime.strptime(value, "%H:%M").replace(tzinfo=adl_tz).time(),
                     )
 
     def distance(self, latitude: float, longitude: float):
@@ -116,15 +121,16 @@ class FuelStation:
         lat/long coordinate.
         :return: Distance object
         """
-        distance = geopy.distance.geodesic(
+        return geodesic(
             (self.Lat, self.Lng),
             (latitude, longitude),
         )
-        return distance
 
-    def is_open(self, date_time: datetime = None):
+    def is_open(self, date_time: datetime | None = None):
+        adl_tz = pytz.timezone("Australia/Adelaide")
+
         if date_time is None:
-            date_time = datetime.now()
+            date_time = datetime.now(tz=adl_tz)
 
         opening_hours = {
             "Monday": (self.MO, self.MC),
@@ -142,9 +148,9 @@ class FuelStation:
         if (
             opening_hours[weekday][0] is not None
             and opening_hours[weekday][1] is not None
+            and opening_hours[weekday][0] <= time <= opening_hours[weekday][1]
         ):
-            if opening_hours[weekday][0] <= time <= opening_hours[weekday][1]:
-                return True
+            return True
 
         return False
 
@@ -155,7 +161,7 @@ class FuelStationPrice:
     FuelId: int
     CollectionMethod: str
     TransactionDateUtc: str
-    Price: float
+    Price: Money
 
     def __post_init__(self):
         if isinstance(self.TransactionDateUtc, str):
