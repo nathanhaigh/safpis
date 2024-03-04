@@ -26,7 +26,8 @@ jobs:
         python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Set up 🐍 ${{ matrix.python-version }}
         uses: actions/setup-python@v5
@@ -37,7 +38,7 @@ jobs:
         run: pip install --upgrade hatch
 
       - name: Lint using 🐍 ${{ matrix.python-version }} on ${{ runner.os }} 
-        if: matrix.python-version == '3.9' && runner.os == 'Linux'
+        if: matrix.python-version == '3.12' && runner.os == 'Linux'
         env:
           SAFPIS_SUBSCRIBER_TOKEN: ${{ secrets.SAFPIS_SUBSCRIBER_TOKEN }}
         run: hatch run lint:style

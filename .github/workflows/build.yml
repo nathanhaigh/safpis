@@ -34,11 +34,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install build dependencies
-        run: python -m pip install --upgrade build
+      - name: Set up 🐍 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+  
+      - name: Install 🐣
+        run: pip install --upgrade hatch
 
       - name: Build a wheel and source tarball
-        run: python -m build
+        run: hatch build
 
       - name: Store distribution 📦
         uses: actions/upload-artifact@v4
