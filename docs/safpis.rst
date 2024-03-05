@@ -28,6 +28,14 @@ safpis.models module
    :undoc-members:
    :show-inheritance:
 
+safpis.safpis module
+--------------------
+
+.. automodule:: safpis.safpis
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 
