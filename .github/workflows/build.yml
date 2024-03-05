@@ -75,6 +75,12 @@ jobs:
     needs:
       - check
     runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/safpis
+    permissions:
+        contents: read  # This job doesn't need to `git push` anything
+        id-token: write  # Mandatory for trusted publishing
     steps:
       - name: Download distribution 📦 artifacts
         uses: actions/download-artifact@v4
