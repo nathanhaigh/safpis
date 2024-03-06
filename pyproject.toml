@@ -53,6 +53,7 @@ dependencies = [
     "python-dateutil>=2.7.0",
     "Click>=6.0",
     "pytz",
+    "setuptools",
 ]
 
 [project.urls]

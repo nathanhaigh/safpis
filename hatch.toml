@@ -10,10 +10,11 @@ test = "pytest {args:tests}"
 cov = "pytest --cov=safpis --cov-branch --cov-report=xml:tests/coverage.xml --junitxml=tests/result.xml {args:tests}"
 
 [version]
+path = "safpis/__about__.py"
 source = "vcs"
 
 [build.hooks.vcs]
-version-file = "safpis/_version.py"
+version-file = "_version.py"
 
 [version.raw-options]
 local_scheme = "no-local-version"

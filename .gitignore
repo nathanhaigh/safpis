@@ -112,4 +112,4 @@ secrets.cfg
 *.swp
 
 # Ignore hatch version-file
-safpis/_version.py
+_version.py
